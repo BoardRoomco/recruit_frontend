@@ -70,27 +70,13 @@ const JobList: React.FC = () => {
                       </h3>
                       <p className="text-sm text-gray-600 mb-2">{job.company.name}</p>
                       
-                      {job.location && (
-                        <p className="text-sm text-gray-500 mb-2 flex items-center">
-                          <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {job.location}
-                        </p>
-                      )}
-                      
-                      {job.salary && (
-                        <p className="text-sm text-green-600 font-medium mb-2">
-                          {job.salary}
-                        </p>
-                      )}
-                      
-                      {job.type && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                          {job.type}
-                        </span>
-                      )}
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        job.status === 'active' ? 'bg-green-100 text-green-800' :
+                        job.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {job.status}
+                      </span>
                     </div>
                   </div>
                   

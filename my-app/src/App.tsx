@@ -8,6 +8,7 @@ import JobDetail from "./pages/jobs/detail";
 import Dashboard from "./pages/dashboard/dashboard";
 import CreateJob from "./pages/dashboard/create";
 import JobApplicants from "./pages/dashboard/jobDetail";
+import EditJob from "./pages/dashboard/edit";
 import CandidateProfile from "./pages/candidate/profile";
 import CandidateApps from "./pages/candidate/applications";
 
@@ -209,6 +210,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
                   <JobApplicants />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard/jobs/:id/edit" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <EditJob />
                 </ProtectedRoute>
               } 
             />

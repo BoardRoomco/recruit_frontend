@@ -62,7 +62,12 @@ const Register: React.FC = () => {
         formData.lastName,
         formData.companyName
       );
-      navigate('/dashboard');
+      // Redirect based on user role
+      if (formData.role === 'employer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/jobs');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {

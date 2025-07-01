@@ -18,8 +18,13 @@ const Login: React.FC = () => {
 
     try {
       await login(email, password);
-      // Redirect based on user role (will be handled by protected routes)
-      navigate('/dashboard');
+      // Redirect based on user role
+      const user = JSON.parse(localStorage.getItem('recruit_user') || '{}');
+      if (user.role === 'employer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/jobs');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

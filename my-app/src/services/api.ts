@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 
 // API Configuration
-const API_BASE_URL = 'http://3.16.183.0:3000/api';
+const API_BASE_URL = 'http://localhost:3000/api';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -70,9 +70,7 @@ export interface Job {
   title: string;
   description: string;
   requirements?: string;
-  salary?: string;
-  location?: string;
-  type?: string;
+  assessmentLink?: string;
   status: string;
   companyId: string;
   createdAt: string;
@@ -105,7 +103,6 @@ export interface Application {
   job?: {
     id: string;
     title: string;
-    location?: string;
     company?: {
       name: string;
     };
@@ -156,9 +153,7 @@ export const jobsAPI = {
     title: string;
     description: string;
     requirements?: string;
-    salary?: string;
-    location?: string;
-    type?: string;
+    assessmentLink?: string;
   }): Promise<{ job: Job }> => {
     const response = await api.post('/jobs', jobData);
     return response.data.data;

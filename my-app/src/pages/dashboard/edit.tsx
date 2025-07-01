@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { jobsAPI } from '../../services/api';
 
-const CreateJob: React.FC = () => {
+interface Job {
+  id: string;
+  title: string;
+  description: string;
+  requirements?: string;
+  assessmentLink?: string;
+  status: string;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+  company: {
+    id: string;
+    name: string;
+    description?: string;
+    website?: string;
+  };
+}
+
+const EditJob: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [job, setJob] = useState<Job | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -11,8 +31,34 @@ const CreateJob: React.FC = () => {
     assessmentLink: '',
     status: 'active'
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        const jobData = await jobsAPI.getById(id);
+        setJob(jobData);
+        setFormData({
+          title: jobData.title,
+          description: jobData.description,
+          requirements: jobData.requirements || '',
+          assessmentLink: jobData.assessmentLink || '',
+          status: jobData.status
+        });
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Failed to load job details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJob();
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -24,26 +70,84 @@ const CreateJob: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (!id) return;
+
+    setSaving(true);
     setError('');
 
     try {
-      await jobsAPI.create(formData);
-      navigate('/dashboard/jobs');
+      await jobsAPI.update(id, formData);
+      navigate(`/dashboard/jobs/${id}`);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create job');
+      setError(err.response?.data?.message || 'Failed to update job');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading job details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !job) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Not Found</h2>
+          <p className="text-gray-600 mb-6">{error || 'The job you are looking for does not exist.'}</p>
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
+          {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Create New Job</h1>
-            <p className="text-gray-600 mt-2">Fill in the details below to create a new job posting.</p>
+            <nav className="flex mb-4" aria-label="Breadcrumb">
+              <ol className="flex items-center space-x-4">
+                <li>
+                  <Link to="/dashboard" className="text-gray-500 hover:text-gray-700">
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <div className="flex items-center">
+                    <svg className="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <Link to={`/dashboard/jobs/${job.id}`} className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                      Job Details
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="flex items-center">
+                    <svg className="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="ml-4 text-sm font-medium text-gray-500">Edit Job</span>
+                  </div>
+                </li>
+              </ol>
+            </nav>
+            <h1 className="text-2xl font-bold text-gray-900">Edit Job</h1>
+            <p className="text-gray-600 mt-2">Update the details for "{job.title}"</p>
           </div>
 
           {error && (
@@ -140,21 +244,20 @@ const CreateJob: React.FC = () => {
               </select>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Buttons */}
             <div className="flex justify-end space-x-4 pt-6">
-              <button
-                type="button"
-                onClick={() => navigate('/dashboard/jobs')}
+              <Link
+                to={`/dashboard/jobs/${job.id}`}
                 className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Cancel
-              </button>
+              </Link>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={saving}
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating...' : 'Create Job'}
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </form>
@@ -164,4 +267,4 @@ const CreateJob: React.FC = () => {
   );
 };
 
-export default CreateJob;
+export default EditJob; 
