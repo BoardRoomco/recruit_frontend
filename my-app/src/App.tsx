@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navigation from "./components/Navigation";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
+
 import JobList from "./pages/jobs/list";
 import JobDetail from "./pages/jobs/detail";
 import Dashboard from "./pages/dashboard/dashboard";

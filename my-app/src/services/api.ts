@@ -135,6 +135,79 @@ export const authAPI = {
     const response = await api.post('/auth/register', payload);
     return response.data;
   },
+
+  // New resume upload and parsing endpoint (Step 1)
+  uploadResumeAndParse: async (
+    email: string,
+    password: string,
+    role: string,
+    resumeFile: File
+  ): Promise<{
+    success: boolean;
+    message: string;
+    data: {
+      sessionId: string;
+      parsedData: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        currentPosition?: string;
+        education?: string;
+        confidence: number;
+      };
+      confidence: number;
+    };
+  }> => {
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('role', role);
+    formData.append('resumeFile', resumeFile);
+    
+    const response = await api.post('/auth/register/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
+  // Registration confirmation endpoint (Step 2)
+  confirmRegistration: async (
+    sessionId: string,
+    parsedData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      currentPosition?: string;
+      education?: string;
+    }
+  ): Promise<AuthResponse> => {
+    const response = await api.post('/auth/register/confirm', {
+      sessionId,
+      parsedData
+    });
+    return response.data;
+  },
+
+  // Get session data endpoint
+  getSessionData: async (sessionId: string): Promise<{
+    success: boolean;
+    data: {
+      email: string;
+      role: string;
+      parsedData: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        currentPosition?: string;
+        education?: string;
+        confidence: number;
+      };
+      confidence: number;
+    };
+  }> => {
+    const response = await api.get(`/auth/register/session/${sessionId}`);
+    return response.data;
+  }
 };
 
 // Jobs API
@@ -243,6 +316,13 @@ export const dashboardAPI = {
     const response = await api.get('/companies/analytics');
     return response.data.data;
   },
+};
+
+export const candidateAPI = {
+  getProfile: async () => {
+    const response = await api.get('/candidates/profile');
+    return response.data.data.candidate;
+  }
 };
 
 export default api; 

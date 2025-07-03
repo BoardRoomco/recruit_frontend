@@ -13,6 +13,18 @@ interface AuthContextType {
   // Functions
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, role: 'candidate' | 'employer', firstName?: string, lastName?: string, companyName?: string) => Promise<void>;
+  uploadResumeAndParse: (email: string, password: string, role: string, resumeFile: File) => Promise<{
+    sessionId: string;
+    parsedData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      currentPosition?: string;
+      education?: string;
+      confidence: number;
+    };
+  }>;
+  confirmRegistration: (sessionId: string, parsedData: any) => Promise<void>;
   logout: () => void;
   
   // Utility
@@ -112,6 +124,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Resume upload and parse function (Step 1)
+  const uploadResumeAndParse = async (email: string, password: string, role: string, resumeFile: File) => {
+    setIsLoading(true);
+    try {
+      const response = await authAPI.uploadResumeAndParse(email, password, role, resumeFile);
+      
+      if (response.success) {
+        return {
+          sessionId: response.data.sessionId,
+          parsedData: response.data.parsedData
+        };
+      } else {
+        throw new Error(response.message || 'Resume parsing failed');
+      }
+      
+    } catch (error) {
+      console.error('Resume upload failed:', error);
+      throw new Error(error instanceof Error ? error.message : 'Resume upload failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Confirm registration function (Step 2)
+  const confirmRegistration = async (sessionId: string, parsedData: any) => {
+    setIsLoading(true);
+    try {
+      const response = await authAPI.confirmRegistration(sessionId, parsedData);
+      
+      if (response.success) {
+        // Store the data
+        setUser(response.data.user);
+        setToken(response.data.token);
+        
+        // Save to localStorage
+        localStorage.setItem('recruit_auth_token', response.data.token);
+        localStorage.setItem('recruit_user', JSON.stringify(response.data.user));
+      } else {
+        throw new Error(response.message || 'Registration confirmation failed');
+      }
+      
+    } catch (error) {
+      console.error('Registration confirmation failed:', error);
+      throw new Error(error instanceof Error ? error.message : 'Registration confirmation failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Logout function
   const logout = () => {
     setUser(null);
@@ -138,7 +199,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
-    updateUser
+    updateUser,
+    uploadResumeAndParse,
+    confirmRegistration
   };
 
   return (
