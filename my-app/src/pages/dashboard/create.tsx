@@ -29,7 +29,7 @@ const CreateJob: React.FC = () => {
 
     try {
       await jobsAPI.create(formData);
-      navigate('/dashboard/jobs');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create job');
     } finally {
