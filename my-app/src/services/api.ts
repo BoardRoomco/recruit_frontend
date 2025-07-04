@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://recruitbackend-production.up.railway.app/api';
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -322,6 +322,11 @@ export const candidateAPI = {
   getProfile: async () => {
     const response = await api.get('/candidates/profile');
     return response.data.data.candidate;
+  },
+  
+  getAssessmentScores: async () => {
+    const response = await api.get('/candidates/assessment-scores');
+    return response.data.data;
   }
 };
 
