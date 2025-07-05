@@ -8,6 +8,7 @@ interface Job {
   description: string;
   requirements?: string;
   assessmentLink?: string;
+  assessmentField?: string;
   status: string;
   companyId: string;
   createdAt: string;
@@ -29,6 +30,7 @@ const EditJob: React.FC = () => {
     description: '',
     requirements: '',
     assessmentLink: '',
+    assessmentField: '',
     status: 'active'
   });
   const [loading, setLoading] = useState(true);
@@ -48,6 +50,7 @@ const EditJob: React.FC = () => {
           description: jobData.description,
           requirements: jobData.requirements || '',
           assessmentLink: jobData.assessmentLink || '',
+          assessmentField: (jobData as any).assessmentField || '',
           status: jobData.status
         });
       } catch (err: any) {
@@ -223,6 +226,33 @@ const EditJob: React.FC = () => {
               />
               <p className="mt-1 text-sm text-gray-500">
                 Optional: Provide a link to an assessment or test that candidates should complete.
+              </p>
+            </div>
+
+            {/* Assessment Field */}
+            <div>
+              <label htmlFor="assessmentField" className="block text-sm font-medium text-gray-700 mb-2">
+                Assessment Field
+              </label>
+              <select
+                id="assessmentField"
+                name="assessmentField"
+                value={formData.assessmentField}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select a field (optional)</option>
+                <option value="electrical">Electrical Engineering</option>
+                <option value="mechanical">Mechanical Engineering</option>
+                <option value="software">Software Engineering</option>
+                <option value="civil">Civil Engineering</option>
+                <option value="chemical">Chemical Engineering</option>
+                <option value="biomedical">Biomedical Engineering</option>
+                <option value="aerospace">Aerospace Engineering</option>
+                <option value="industrial">Industrial Engineering</option>
+              </select>
+              <p className="mt-1 text-sm text-gray-500">
+                Optional: Select the engineering field for specialized skill assessment.
               </p>
             </div>
 

@@ -10,6 +10,12 @@ interface AssessmentScore {
   technicalAccuracy: number | null;
   problemSolving: number | null;
   communication: number | null;
+  // Field-specific scores for electrical engineering
+  circuitDesign?: number | null;
+  powerSystems?: number | null;
+  controlSystems?: number | null;
+  electronics?: number | null;
+  signalProcessing?: number | null;
   status: string;
   completedAt: string;
 }
@@ -50,6 +56,27 @@ const CandidateProfile: React.FC = () => {
     if (score >= 0.8) return 'text-green-600';
     if (score >= 0.6) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  // Check if assessment has field-specific scores
+  const hasFieldScores = (assessment: AssessmentScore) => {
+    return assessment.circuitDesign !== undefined || 
+           assessment.powerSystems !== undefined || 
+           assessment.controlSystems !== undefined || 
+           assessment.electronics !== undefined || 
+           assessment.signalProcessing !== undefined;
+  };
+
+  // Get field-specific scores (including null values like main scores)
+  const getFieldScores = (assessment: AssessmentScore) => {
+    const fieldScores = [];
+    // Always include all field-specific scores, even if null
+    fieldScores.push({ name: 'Circuit Design', score: assessment.circuitDesign ?? null });
+    fieldScores.push({ name: 'Power Systems', score: assessment.powerSystems ?? null });
+    fieldScores.push({ name: 'Control Systems', score: assessment.controlSystems ?? null });
+    fieldScores.push({ name: 'Electronics', score: assessment.electronics ?? null });
+    fieldScores.push({ name: 'Signal Processing', score: assessment.signalProcessing ?? null });
+    return fieldScores;
   };
 
   if (loading) return <div className="text-gray-900">Loading...</div>;
@@ -100,7 +127,8 @@ const CandidateProfile: React.FC = () => {
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Main Assessment Scores */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="text-center">
                     <div className="text-sm text-gray-600 mb-1">Technical Accuracy</div>
                     <div className={`text-lg font-semibold ${getScoreColor(assessment.technicalAccuracy)}`}>
@@ -120,6 +148,23 @@ const CandidateProfile: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Field-Specific Scores */}
+                {hasFieldScores(assessment) && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">Field-Specific Skills</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                      {getFieldScores(assessment).map((fieldScore, index) => (
+                        <div key={index} className="text-center">
+                          <div className="text-xs text-gray-600 mb-1">{fieldScore.name}</div>
+                          <div className={`text-sm font-semibold ${getScoreColor(fieldScore.score)}`}>
+                            {formatScore(fieldScore.score)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <div className="text-xs text-gray-500">
