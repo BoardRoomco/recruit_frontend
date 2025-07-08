@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fustat:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,9 +29,7 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  @apply bg-softLavender font-dmsans text-graphite;
 }
 
 h1 {
