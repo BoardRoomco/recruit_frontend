@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import TitleLogo from '../assets/titlelogo.svg';
 
 const Navigation: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -18,84 +19,89 @@ const Navigation: React.FC = () => {
   return (
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
+        <div className="flex justify-between h-20 items-center">
+          {/* Left: Logo and Browse Jobs */}
+          <div className="flex items-center space-x-6">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <h1 className="text-xl font-bold text-indigo-600">RecruitHub</h1>
+              <img src={TitleLogo} alt="Colare Logo" className="h-10 w-auto" />
             </Link>
-            
-            <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <Link
-                to="/jobs"
-                className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Browse Jobs
-              </Link>
-              
-              {isAuthenticated && user?.role === 'employer' && (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    to="/dashboard/create"
-                    className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Post Job
-                  </Link>
-                </>
-              )}
-              
-              {isAuthenticated && user?.role === 'candidate' && (
-                <>
-                  <Link
-                    to="/candidate/profile"
-                    className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Profile
-                  </Link>
-                  <Link
-                    to="/candidate/applications"
-                    className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    My Applications
-                  </Link>
-                </>
-              )}
-            </div>
+            <Link
+              to="/jobs"
+              className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
+            >
+              Browse Jobs
+            </Link>
+            {isAuthenticated && user?.role === 'employer' && (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/dashboard/create"
+                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
+                >
+                  Post Job
+                </Link>
+              </>
+            )}
+            {isAuthenticated && user?.role === 'candidate' && (
+              <>
+                <Link
+                  to="/candidate/profile"
+                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/candidate/applications"
+                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
+                >
+                  My Applications
+                </Link>
+              </>
+            )}
           </div>
-
-          <div className="flex items-center">
+          {/* Right: Contact us, Sign In/Up or Welcome/Logout */}
+          <div className="flex items-center space-x-4">
+            <a
+              href="#contact"
+              className="px-6 py-2 rounded-full border-2 border-violet text-violet font-dmsans font-medium bg-white hover:bg-softLavender transition flex items-center gap-2"
+            >
+              Contact us
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3" />
+              </svg>
+            </a>
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
+                <span className="text-base text-graphite font-dmsans">
                   Welcome, {user?.candidate?.firstName || user?.company?.name || user?.email}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  className="bg-violet hover:bg-corePurple text-white px-4 py-2 rounded-full text-base font-medium font-dmsans transition"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
+              <>
                 <Link
                   to="/login"
-                  className="text-gray-900 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                  className="px-6 py-2 rounded-full border-2 border-violet text-violet font-dmsans font-medium bg-white hover:bg-softLavender transition"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  className="px-6 py-2 rounded-full border-2 border-corePurple text-corePurple font-dmsans font-medium bg-white hover:bg-softLavender transition"
                 >
                   Sign Up
                 </Link>
-              </div>
+              </>
             )}
           </div>
         </div>
