@@ -25,12 +25,6 @@ const Navigation: React.FC = () => {
             <Link to="/" className="flex-shrink-0 flex items-center">
               <img src={TitleLogo} alt="Colare Logo" className="h-10 w-auto" />
             </Link>
-            <Link
-              to="/jobs"
-              className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
-            >
-              Browse Jobs
-            </Link>
             {isAuthenticated && user?.role === 'employer' && (
               <>
                 <Link
@@ -64,17 +58,8 @@ const Navigation: React.FC = () => {
               </>
             )}
           </div>
-          {/* Right: Contact us, Sign In/Up or Welcome/Logout */}
+          {/* Right: Book a demo and Sign In/Logout */}
           <div className="flex items-center space-x-4">
-            <a
-              href="#contact"
-              className="px-6 py-2 rounded-full border-2 border-violet text-violet font-dmsans font-medium bg-white hover:bg-softLavender transition flex items-center gap-2"
-            >
-              Contact us
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3" />
-              </svg>
-            </a>
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <span className="text-base text-graphite font-dmsans">
@@ -91,16 +76,21 @@ const Navigation: React.FC = () => {
               <>
                 <Link
                   to="/login"
-                  className="px-6 py-2 rounded-full border-2 border-violet text-violet font-dmsans font-medium bg-white hover:bg-softLavender transition"
+                  className="text-violet font-dmsans font-medium text-base hover:underline transition"
                 >
                   Sign In
                 </Link>
-                <Link
-                  to="/register"
-                  className="px-6 py-2 rounded-full border-2 border-corePurple text-corePurple font-dmsans font-medium bg-white hover:bg-softLavender transition"
+                <a
+                  href="https://calendly.com/boardroomco/30min"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-2 rounded-full bg-violet text-white font-dmsans font-medium text-base shadow hover:bg-corePurple transition"
                 >
-                  Sign Up
-                </Link>
+                  Book a demo
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 inline ml-2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3" />
+                  </svg>
+                </a>
               </>
             )}
           </div>
