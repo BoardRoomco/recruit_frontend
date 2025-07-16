@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
           {/* Left: Logo and Browse Jobs */}
           <div className="flex items-center space-x-6">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <img src={TitleLogo} alt="Colare Logo" className="h-10 w-auto" />
+              <img src={TitleLogo} alt="Colare Logo" className="h-6 w-auto" />
             </Link>
             {isAuthenticated && user?.role === 'employer' && (
               <>

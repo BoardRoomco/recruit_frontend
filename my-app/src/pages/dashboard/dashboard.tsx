@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { jobsAPI, applicationsAPI } from '../../services/api';
 import { 
@@ -10,7 +10,10 @@ import {
   Eye, 
   ArrowRight,
   User,
-  Calendar
+  Calendar,
+  DotsThreeVertical,
+  MagnifyingGlass,
+  FunnelSimple
 } from '@phosphor-icons/react';
 
 interface Job {
@@ -37,23 +40,71 @@ interface Application {
   };
 }
 
+// Skeleton Loading Components
+const StatsCardSkeleton = () => (
+  <div className="bg-white overflow-hidden shadow-lg rounded-2xl border border-gray-100 animate-pulse">
+    <div className="p-6">
+      <div className="flex items-center">
+        <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+        <div className="ml-4 flex-1">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+          <div className="h-8 bg-gray-200 rounded w-16"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const TableRowSkeleton = () => (
+  <tr className="animate-pulse">
+    <td className="px-6 py-4">
+      <div className="h-4 bg-gray-200 rounded w-48"></div>
+    </td>
+    <td className="px-6 py-4">
+      <div className="h-4 bg-gray-200 rounded w-12"></div>
+    </td>
+    <td className="px-6 py-4">
+      <div className="h-4 bg-gray-200 rounded w-20"></div>
+    </td>
+    <td className="px-6 py-4 text-right">
+      <div className="h-6 w-6 bg-gray-200 rounded-full ml-auto"></div>
+    </td>
+  </tr>
+);
+
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [view, setView] = useState<'card' | 'table'>('card');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
+        setStatsLoading(true);
+        setTableLoading(true);
+        
+        // Simulate progressive loading for better UX
         const [jobsData, applicationsData] = await Promise.all([
           jobsAPI.getByCompany(user?.company?.id || ''),
           applicationsAPI.getCompanyApplications()
         ]);
+        
         setJobs(jobsData);
         setApplications(applicationsData);
+        
+        // Show stats first, then table
+        setTimeout(() => setStatsLoading(false), 300);
+        setTimeout(() => setTableLoading(false), 600);
+        
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load dashboard data');
       } finally {
@@ -68,224 +119,235 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white to-softLavender flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet mx-auto"></div>
-          <p className="mt-4 text-graphite font-dmsans">Loading dashboard...</p>
+          <div className="w-16 h-16 bg-violet rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <Briefcase className="h-8 w-8 text-white" weight="regular" />
+          </div>
+          <h2 className="text-2xl font-fustat font-bold text-graphite mb-2">Loading Dashboard</h2>
+          <p className="text-graphite font-dmsans">Preparing your workspace...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-gradient-to-br from-white to-softLavender py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <div>
-              <h1 className="text-3xl font-fustat font-bold text-graphite">Company Dashboard</h1>
-              <p className="text-graphite mt-2 font-dmsans">Welcome back, {user?.company?.name}</p>
+              <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Welcome back, {user?.company?.name}</h1>
+              <p className="text-graphite font-dmsans text-lg">Here's what's happening with your job assessments</p>
             </div>
-            <Link
-              to="/dashboard/create"
-              className="inline-flex items-center px-6 py-3 border border-transparent rounded-full shadow-lg text-base font-medium text-white bg-violet hover:bg-corePurple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet font-dmsans transition"
-            >
-              <Plus className="w-5 h-5 mr-2" weight="regular" />
-              Create New Job
-            </Link>
+            {/* Removed large Create New Job button here */}
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-6 bg-red-50 border border-red-200 rounded-2xl">
             <p className="text-red-600 font-dmsans">{error}</p>
           </div>
         )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white overflow-hidden shadow-lg rounded-2xl border border-gray-100">
-            <div className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-softLavender rounded-xl flex items-center justify-center">
-                    <Briefcase className="h-6 w-6 text-violet" weight="regular" />
-                  </div>
-                </div>
-                <div className="ml-4 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-graphite font-dmsans">Active Jobs</dt>
-                    <dd className="text-2xl font-bold text-graphite font-fustat">
-                      {jobs.filter(job => job.status === 'active').length}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow-lg rounded-2xl border border-gray-100">
-            <div className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-softLavender rounded-xl flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-violet" weight="regular" />
-                  </div>
-                </div>
-                <div className="ml-4 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-graphite font-dmsans">Total Applications</dt>
-                    <dd className="text-2xl font-bold text-graphite font-fustat">{applications.length}</dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow-lg rounded-2xl border border-gray-100">
-            <div className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-softLavender rounded-xl flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-violet" weight="regular" />
-                  </div>
-                </div>
-                <div className="ml-4 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-graphite font-dmsans">Pending Reviews</dt>
-                    <dd className="text-2xl font-bold text-graphite font-fustat">
-                      {applications.filter(app => app.status === 'submitted').length}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Jobs */}
-        <div className="bg-white shadow-lg rounded-2xl border border-gray-100 mb-8">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-xl font-fustat font-bold text-graphite">Recent Job Postings</h2>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {jobs.length === 0 ? (
-              <div className="px-6 py-12 text-center">
-                <div className="w-16 h-16 bg-softLavender rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Briefcase className="h-8 w-8 text-violet" weight="regular" />
-                </div>
-                <h3 className="text-lg font-fustat font-bold text-graphite mb-2">No jobs posted</h3>
-                <p className="text-graphite font-dmsans mb-6">Get started by creating your first job posting.</p>
-                <Link
-                  to="/dashboard/create"
-                  className="inline-flex items-center px-6 py-3 border border-transparent shadow-lg text-base font-medium rounded-full text-white bg-violet hover:bg-corePurple font-dmsans transition"
-                >
-                  <Plus className="w-5 h-5 mr-2" weight="regular" />
-                  Create Job
-                </Link>
-              </div>
-            ) : (
-              jobs.slice(0, 5).map((job) => (
-                <div key={job.id} className="px-6 py-4 hover:bg-gray-50 transition">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-base font-medium text-graphite font-dmsans">{job.title}</h3>
-                      <p className="text-sm text-gray-500 font-dmsans flex items-center mt-1">
-                        <Calendar className="w-4 h-4 mr-1" weight="regular" />
-                        Posted {new Date(job.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-dmsans ${
-                        job.status === 'active' ? 'bg-green-100 text-green-800' :
-                        job.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {job.status}
-                      </span>
-                      <span className="text-sm text-gray-500 font-dmsans">
-                        {job._count?.applications || 0} applications
-                      </span>
-                      <Link
-                        to={`/dashboard/jobs/${job.id}`}
-                        className="text-violet hover:text-corePurple text-sm font-medium font-dmsans flex items-center"
-                      >
-                        <Eye className="w-4 h-4 mr-1" weight="regular" />
-                        View Details
-                      </Link>
+          {statsLoading ? (
+            <>
+              <StatsCardSkeleton />
+              <StatsCardSkeleton />
+              <StatsCardSkeleton />
+            </>
+          ) : (
+            <>
+              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
+                <div className="p-4 flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
+                      <Briefcase className="h-4 w-4 text-violet" weight="regular" />
                     </div>
                   </div>
+                  <div className="ml-3 w-0 flex-1">
+                    <dl>
+                      <dt className="text-xs font-medium text-graphite font-dmsans">Active Jobs</dt>
+                      <dd className="text-lg font-bold text-graphite font-fustat">
+                        {jobs.filter(job => job.status === 'active').length}
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
-              ))
-            )}
-          </div>
-          {jobs.length > 5 && (
-            <div className="px-6 py-4 border-t border-gray-100">
-              <Link
-                to="/dashboard/jobs"
-                className="text-violet hover:text-corePurple text-sm font-medium font-dmsans flex items-center"
-              >
-                View all jobs
-                <ArrowRight className="w-4 h-4 ml-1" weight="regular" />
-              </Link>
-            </div>
+              </div>
+              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
+                <div className="p-4 flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-violet" weight="regular" />
+                    </div>
+                  </div>
+                  <div className="ml-3 w-0 flex-1">
+                    <dl>
+                      <dt className="text-xs font-medium text-graphite font-dmsans">Total Candidates</dt>
+                      <dd className="text-lg font-bold text-graphite font-fustat">{applications.length}</dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
+                <div className="p-4 flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
+                      <Clock className="h-4 w-4 text-violet" weight="regular" />
+                    </div>
+                  </div>
+                  <div className="ml-3 w-0 flex-1">
+                    <dl>
+                      <dt className="text-xs font-medium text-graphite font-dmsans">Pending Reviews</dt>
+                      <dd className="text-lg font-bold text-graphite font-fustat">
+                        {applications.filter(app => app.status === 'submitted').length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
 
-        {/* Recent Applications */}
-        <div className="bg-white shadow-lg rounded-2xl border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-xl font-fustat font-bold text-graphite">Recent Applications</h2>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {applications.length === 0 ? (
-              <div className="px-6 py-12 text-center">
-                <div className="w-16 h-16 bg-softLavender rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-violet" weight="regular" />
-                </div>
-                <h3 className="text-lg font-fustat font-bold text-graphite mb-2">No applications yet</h3>
-                <p className="text-graphite font-dmsans">Applications will appear here once candidates start applying.</p>
-              </div>
-            ) : (
-              applications.slice(0, 5).map((application) => (
-                <div key={application.id} className="px-6 py-4 hover:bg-gray-50 transition">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-base font-medium text-graphite font-dmsans flex items-center">
-                        <User className="w-4 h-4 mr-2" weight="regular" />
-                        {application.candidate?.firstName} {application.candidate?.lastName}
-                      </h3>
-                      <p className="text-sm text-gray-500 font-dmsans">
-                        Applied for {application.job?.title}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium font-dmsans ${
-                        application.status === 'submitted' ? 'bg-blue-100 text-blue-800' :
-                        application.status === 'reviewed' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {application.status}
-                      </span>
-                      <span className="text-sm text-gray-500 font-dmsans">
-                        {new Date(application.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-          {applications.length > 5 && (
-            <div className="px-6 py-4 border-t border-gray-100">
-              <Link
-                to="/dashboard/applications"
-                className="text-violet hover:text-corePurple text-sm font-medium font-dmsans flex items-center"
+        {/* View Toggle and Job Cards/Table Section */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-6">
+            <div className="flex-1 flex gap-2">
+              <input
+                type="text"
+                placeholder="Search jobs..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full md:w-72 px-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm focus:outline-none focus:ring-1 focus:ring-violet"
+              />
+              <button
+                className="flex items-center gap-1 px-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm shadow-sm hover:bg-gray-50 transition"
+                onClick={() => setFilterOpen(true)}
               >
-                View all applications
-                <ArrowRight className="w-4 h-4 ml-1" weight="regular" />
+                <FunnelSimple size={18} className="text-gray-500" />
+                Filter
+              </button>
+            </div>
+            <div className="flex gap-2 items-center">
+              <button
+                className={`px-3 py-1.5 rounded-full text-sm font-medium font-dmsans transition ${view === 'card' ? 'bg-gray-100 text-graphite' : 'bg-white text-graphite border border-gray-200'}`}
+                onClick={() => setView('card')}
+              >
+                Card View
+              </button>
+              <button
+                className={`px-3 py-1.5 rounded-full text-sm font-medium font-dmsans transition ${view === 'table' ? 'bg-gray-100 text-graphite' : 'bg-white text-graphite border border-gray-200'}`}
+                onClick={() => setView('table')}
+              >
+                Table View
+              </button>
+              <Link
+                to="/dashboard/create"
+                className="inline-flex items-center px-4 py-2 border border-violet rounded-full text-sm font-medium text-violet bg-white hover:bg-violet hover:text-white font-dmsans transition"
+              >
+                <Plus className="w-4 h-4 mr-1" weight="regular" />
+                New Job Posting
               </Link>
+            </div>
+          </div>
+          {/* Filter Modal (placeholder) */}
+          {filterOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+              <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
+                <h3 className="text-lg font-fustat font-bold text-graphite mb-4">Filter Jobs</h3>
+                <p className="text-graphite font-dmsans mb-6">(Filter options coming soon!)</p>
+                <button
+                  className="px-4 py-2 rounded-full bg-gray-100 text-graphite font-dmsans font-medium hover:bg-gray-200 transition"
+                  onClick={() => setFilterOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+          {view === 'card' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map((job) => (
+                <div
+                  key={job.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col gap-2 relative group hover:shadow-md transition cursor-pointer"
+                  onClick={() => navigate(`/dashboard/jobs/${job.id}`)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate(`/dashboard/jobs/${job.id}`); }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-sm font-fustat font-bold text-graphite mb-0.5">{job.title}</h3>
+                      <p className="text-xs text-gray-500 font-dmsans mb-0.5">Hardware Engineering • San Francisco, CA</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium font-dmsans ${job.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>{job.status === 'active' ? 'Accepting candidates' : 'In Review'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
+                    <User size={14} className="text-gray-400" />
+                    {job._count?.applications || 0} candidates assessed
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-gray-500 font-dmsans">Top candidate</span>
+                    <span className="text-sm font-bold text-graphite font-fustat">{Math.floor(Math.random() * 20) + 80}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mb-0.5">
+                    <div className="h-full bg-gray-300 rounded-full" style={{ width: `${Math.floor(Math.random() * 20) + 80}%` }}></div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans mt-0.5">
+                    <Clock size={12} className="text-gray-400" />
+                    {job.status === 'active' ? `${Math.floor(Math.random() * 5) + 1} candidates assessed today` : 'Review due in 2 days'}
+                  </div>
+                  <button
+                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition"
+                    onClick={e => { e.stopPropagation(); /* open actions menu here if needed */ }}
+                  >
+                    <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
+                  </button>
+                </div>
+              ))}
+              {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+                <div className="col-span-full text-center text-graphite font-dmsans text-sm py-8">No jobs found.</div>
+              )}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-100">
+                <thead className="bg-white">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Name</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Candidates</th>
+                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Date Created</th>
+                    <th className="px-3 py-2 text-right text-xs font-semibold text-graphite font-dmsans">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                  {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map(job => (
+                    <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
+                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">
+                        <span className="hover:text-violet hover:underline transition">{job.title}</span>
+                      </td>
+                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">{job._count?.applications || 0}</td>
+                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">{new Date(job.createdAt).toLocaleDateString()}</td>
+                      <td className="px-3 py-2 text-right">
+                        <button className="p-1.5 rounded-full hover:bg-gray-100 transition" onClick={e => e.stopPropagation()}>
+                          <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-3 py-8 text-center text-graphite font-dmsans text-sm">No jobs found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
