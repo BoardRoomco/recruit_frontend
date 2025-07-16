@@ -251,34 +251,6 @@ const JobDetail: React.FC = () => {
               </div>
             )}
 
-            {/* Assessment Link */}
-            {job.assessmentLink && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Assessment Link</h3>
-                <div className="bg-blue-50 rounded-md p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm text-blue-900 break-all">{job.assessmentLink}</p>
-                      <p className="text-xs text-blue-700 mt-1">
-                        Candidates will see this link after applying to the job.
-                      </p>
-                    </div>
-                    <a
-                      href={job.assessmentLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-4 inline-flex items-center px-3 py-1 border border-blue-300 rounded-md text-xs font-medium text-blue-700 bg-white hover:bg-blue-50"
-                    >
-                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Open Link
-                    </a>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Company Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Company Information</h3>
