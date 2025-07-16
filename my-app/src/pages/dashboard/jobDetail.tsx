@@ -352,7 +352,12 @@ const JobDetail: React.FC = () => {
                           </div>
                         </div>
                                                  <div className="ml-4">
-                           <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
+                           <Link 
+                             to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
+                             className="text-sm font-medium text-gray-900 hover:text-[#594CE9] transition-colors duration-200 cursor-pointer"
+                           >
+                             {candidate.name}
+                           </Link>
                          </div>
                       </div>
                     </td>

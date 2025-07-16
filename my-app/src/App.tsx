@@ -11,6 +11,7 @@ import CreateJob from "./pages/dashboard/create";
 import JobApplicants from "./pages/dashboard/jobDetail";
 import EditJob from "./pages/dashboard/edit";
 import CandidateProfile from "./pages/candidate/profile";
+import CandidateDetailProfile from "./pages/dashboard/candidateProfile";
 import CandidateApps from "./pages/candidate/applications";
 
 // Protected Route Component
@@ -131,6 +132,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
                   <EditJob />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard/jobs/:jobId/candidates/:candidateId" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <CandidateDetailProfile />
                 </ProtectedRoute>
               } 
             />
