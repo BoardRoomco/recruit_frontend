@@ -96,7 +96,7 @@ const CandidateProfile: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#594CE9] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading candidate profile...</p>
+          <p className="mt-4 text-gray-600 font-['DM_Sans']">Loading candidate profile...</p>
         </div>
       </div>
     );
@@ -106,11 +106,11 @@ const CandidateProfile: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Candidate Not Found</h2>
-          <p className="text-gray-600 mb-6">The candidate you are looking for does not exist.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Fustat']">Candidate Not Found</h2>
+          <p className="text-gray-600 mb-6 font-['DM_Sans']">The candidate you are looking for does not exist.</p>
           <Link
             to={`/dashboard/jobs/${jobId}`}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#594CE9] hover:bg-[#4D3EF0]"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#594CE9] hover:bg-[#4D3EF0] font-['DM_Sans']"
           >
             Back to Job Details
           </Link>
@@ -126,7 +126,7 @@ const CandidateProfile: React.FC = () => {
         <div className="mb-8">
           <Link
             to={`/dashboard/jobs/${jobId}`}
-            className="inline-flex items-center text-sm text-gray-500 hover:text-[#594CE9] mb-4 transition-colors duration-200"
+            className="inline-flex items-center text-sm text-gray-500 hover:text-[#594CE9] mb-4 transition-colors duration-200 font-['DM_Sans']"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -175,13 +175,13 @@ const CandidateProfile: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="space-y-3 mb-6">
-                <button className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center">
+                <button className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center font-['DM_Sans']">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Download Resume
                 </button>
-                <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200">
+                <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 font-['DM_Sans']">
                   View LinkedIn
                 </button>
               </div>
@@ -190,7 +190,7 @@ const CandidateProfile: React.FC = () => {
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 font-['Fustat']">Colare Score</h3>
                 <div className="text-center mb-3">
-                  <span className="text-4xl font-bold text-[#4D3EF0]">{candidate.colareScore}</span>
+                  <span className="text-4xl font-bold text-gray-900 font-['Fustat']">{candidate.colareScore}</span>
                 </div>
                 <div className="flex items-center justify-center mb-3">
                   <svg className="w-5 h-5 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -200,7 +200,7 @@ const CandidateProfile: React.FC = () => {
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
-                    className="bg-[#4D3EF0] h-2 rounded-full" 
+                    className="bg-[#594CE9] h-2 rounded-full" 
                     style={{ width: `${candidate.colareScore}%` }}
                   ></div>
                 </div>
@@ -219,7 +219,7 @@ const CandidateProfile: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">Technical Skills</span>
-                    <span className="text-sm font-semibold text-[#4D3EF0]">{candidate.skills.technical}%</span>
+                    <span className="text-sm font-semibold text-gray-900">{candidate.skills.technical}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
@@ -232,7 +232,7 @@ const CandidateProfile: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">Problem Solving</span>
-                    <span className="text-sm font-semibold text-[#4D3EF0]">{candidate.skills.problemSolving}%</span>
+                    <span className="text-sm font-semibold text-gray-900">{candidate.skills.problemSolving}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
@@ -245,11 +245,10 @@ const CandidateProfile: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">Communication</span>
-                    <span className="text-sm font-semibold text-[#4D3EF0]">{candidate.skills.communication}%</span>
+                    <span className="text-sm font-semibold text-gray-900">{candidate.skills.communication}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-[#594CE9] h-2 rounded-full" 
+                    <div className="bg-[#594CE9] h-2 rounded-full" 
                       style={{ width: `${candidate.skills.communication}%` }}
                     ></div>
                   </div>
@@ -266,7 +265,7 @@ const CandidateProfile: React.FC = () => {
                   <div key={index}>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">{skill.name}</span>
-                      <span className="text-sm font-semibold text-[#4D3EF0]">{skill.percentage}%</span>
+                      <span className="text-sm font-semibold text-gray-900">{skill.percentage}%</span>
                     </div>
                     <p className="text-xs text-gray-500 mb-2 font-['DM_Sans']">{skill.description}</p>
                     <div className="w-full bg-gray-200 rounded-full h-1.5">

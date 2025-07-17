@@ -230,17 +230,14 @@ const JobDetail: React.FC = () => {
             Back to Jobs
           </Link>
           
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
-              <p className="text-gray-600 text-lg">
-                Hardware Engineering • San Francisco, CA
-              </p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                Accepting candidates
-              </span>
+          <div className="mb-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
+                <p className="text-gray-600 text-lg">
+                  Hardware Engineering • San Francisco, CA
+                </p>
+              </div>
               <Link
                 to={`/dashboard/jobs/${job.id}/edit`}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
@@ -251,6 +248,43 @@ const JobDetail: React.FC = () => {
                 </svg>
                 Edit Job
               </Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                Accepting candidates
+              </span>
+              <div className="flex items-center text-gray-500">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className="text-sm">{filteredCandidates.length} candidates assessed</span>
+              </div>
+            </div>
+            
+            {/* Top Candidate Score */}
+            <div className="mt-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Top candidate</span>
+                <div className="flex items-center space-x-3">
+                  <div className="flex-1 w-32 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gray-600 h-2 rounded-full" 
+                      style={{ width: `${Math.max(...candidates.map(c => c.colareScore))}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900">{Math.max(...candidates.map(c => c.colareScore))}%</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Daily Assessment Count */}
+            <div className="mt-2">
+              <div className="flex items-center text-gray-500">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">5 candidates assessed today</span>
+              </div>
             </div>
           </div>
           
