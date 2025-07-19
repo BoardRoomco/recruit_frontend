@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { jobsAPI } from '../../services/api';
-
-interface Job {
-  id: string;
-  title: string;
-  description: string;
-  requirements?: string;
-  assessmentLink?: string;
-  status: string;
-  companyId: string;
-  createdAt: string;
-  updatedAt: string;
-  company: {
-    id: string;
-    name: string;
-    description?: string;
-    website?: string;
-  };
-  _count?: {
-    applications: number;
-  };
-}
+import { Job, AssessmentScore } from '../../types/assessment';
 
 interface Candidate {
   id: string;
@@ -34,6 +14,7 @@ interface Candidate {
     technical: number;
     problemSolving: number;
     communication: number;
+    fieldSkills?: Record<string, number>;  // Add field-specific skills
   };
   time: string;
   date: string;
@@ -185,6 +166,48 @@ const JobDetail: React.FC = () => {
       default:
         return status;
     }
+  };
+
+  // Add helper function to format skill names
+  const formatSkillName = (name: string) => {
+    return name
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Add field skills section to candidate display
+  const renderFieldSkills = (skills: Record<string, number>) => {
+    if (!skills || Object.keys(skills).length === 0) return null;
+
+    return (
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Field-Specific Skills</h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          {Object.entries(skills).map(([skillName, score], index) => (
+            <div key={index} className="text-center">
+              <div className="text-xs text-gray-600 mb-1">{formatSkillName(skillName)}</div>
+              <div className={`text-sm font-semibold ${getScoreColor(score)}`}>
+                {formatScore(score)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Add helper function to format score
+  const formatScore = (score: number) => {
+    return `${score}%`;
+  };
+
+  // Add helper function to get score color
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-green-600';
+    if (score >= 70) return 'text-blue-600';
+    if (score >= 50) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   if (loading) {
@@ -377,76 +400,48 @@ const JobDetail: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredCandidates.map((candidate) => (
-                  <tr key={candidate.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-sm font-medium text-blue-600">{candidate.avatar}</span>
-                          </div>
+                  <div key={candidate.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                          <span className="text-sm font-medium text-blue-600">{candidate.avatar}</span>
                         </div>
-                                                 <div className="ml-4">
-                           <Link 
-                             to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
-                             className="text-sm font-medium text-gray-900 hover:text-[#594CE9] transition-colors duration-200 cursor-pointer"
-                           >
-                             {candidate.name}
-                           </Link>
-                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span className="text-lg font-semibold text-gray-900">{candidate.colareScore}</span>
-                        <svg className="w-4 h-4 ml-1 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                      <div className="ml-4">
+                        <Link 
+                          to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
+                          className="text-sm font-medium text-gray-900 hover:text-[#594CE9] transition-colors duration-200 cursor-pointer"
+                        >
+                          {candidate.name}
+                        </Link>
                       </div>
-                    </td>
-                                                              <td className="px-6 py-4 whitespace-nowrap">
-                       <div className="text-sm text-gray-600">
-                         {candidate.skills.technical}%
-                       </div>
-                     </td>
-                     <td className="px-6 py-4 whitespace-nowrap">
-                       <div className="text-sm text-gray-600">
-                         {candidate.skills.problemSolving}%
-                       </div>
-                     </td>
-                     <td className="px-6 py-4 whitespace-nowrap">
-                       <div className="text-sm text-gray-600">
-                         {candidate.skills.communication}%
-                       </div>
-                     </td>
-                     <td className="px-6 py-4 whitespace-nowrap">
-                       <div className="flex items-center text-sm text-gray-500">
-                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                         </svg>
-                         {candidate.time}
-                       </div>
-                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(candidate.status)}`}>
-                        {getStatusText(candidate.status)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                             <div className="flex items-center space-x-2">
-                         <button className="text-gray-400 hover:text-gray-600">
-                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                           </svg>
-                         </button>
-                         <button className="text-gray-400 hover:text-gray-600">
-                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                           </svg>
-                         </button>
-                       </div>
-                    </td>
-                  </tr>
+                    </div>
+
+                    {/* Main Assessment Scores */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600 mb-1">Technical Accuracy</div>
+                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.technical)}`}>
+                          {formatScore(candidate.skills.technical)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600 mb-1">Problem Solving</div>
+                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.problemSolving)}`}>
+                          {formatScore(candidate.skills.problemSolving)}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600 mb-1">Communication</div>
+                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.communication)}`}>
+                          {formatScore(candidate.skills.communication)}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Field-Specific Skills */}
+                    {candidate.skills.fieldSkills && renderFieldSkills(candidate.skills.fieldSkills)}
+                  </div>
                 ))}
               </tbody>
             </table>

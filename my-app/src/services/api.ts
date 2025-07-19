@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
+import { AssessmentScore, Job } from '../types/assessment';
 
 // API Configuration
 const API_BASE_URL = 'https://recruitbackend-production.up.railway.app/api';
@@ -245,6 +246,11 @@ export const jobsAPI = {
     const response = await api.get(`/jobs/company/${companyId}`);
     return response.data.data.jobs;
   },
+
+  getJobCandidates: async (jobId: string): Promise<Candidate[]> => {
+    const response = await api.get(`/jobs/${jobId}/candidates`);
+    return response.data.data.candidates;
+  }
 };
 
 // Applications API
@@ -326,7 +332,13 @@ export const candidateAPI = {
   
   getAssessmentScores: async () => {
     const response = await api.get('/candidates/assessment-scores');
-    return response.data.data;
+    // Transform any field-specific scores into the new format if needed
+    const scores = response.data.data.assessmentScores.map((score: any) => ({
+      ...score,
+      // If old format scores exist, convert them to fieldSkills format
+      fieldSkills: score.fieldSkills || {}
+    }));
+    return { assessmentScores: scores };
   }
 };
 

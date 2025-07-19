@@ -10,12 +10,7 @@ interface AssessmentScore {
   technicalAccuracy: number | null;
   problemSolving: number | null;
   communication: number | null;
-  // Field-specific scores for electrical engineering
-  circuitDesign?: number | null;
-  powerSystems?: number | null;
-  controlSystems?: number | null;
-  electronics?: number | null;
-  signalProcessing?: number | null;
+  fieldSkills?: Record<string, number>;  // Dynamic field-specific skills
   status: string;
   completedAt: string;
 }
@@ -58,25 +53,26 @@ const CandidateProfile: React.FC = () => {
     return 'text-red-600';
   };
 
-  // Check if assessment has field-specific scores
-  const hasFieldScores = (assessment: AssessmentScore) => {
-    return assessment.circuitDesign !== undefined || 
-           assessment.powerSystems !== undefined || 
-           assessment.controlSystems !== undefined || 
-           assessment.electronics !== undefined || 
-           assessment.signalProcessing !== undefined;
+  // Format skill names from snake_case to Title Case
+  const formatSkillName = (name: string) => {
+    return name
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
-  // Get field-specific scores (including null values like main scores)
-  const getFieldScores = (assessment: AssessmentScore) => {
-    const fieldScores = [];
-    // Always include all field-specific scores, even if null
-    fieldScores.push({ name: 'Circuit Design', score: assessment.circuitDesign ?? null });
-    fieldScores.push({ name: 'Power Systems', score: assessment.powerSystems ?? null });
-    fieldScores.push({ name: 'Control Systems', score: assessment.controlSystems ?? null });
-    fieldScores.push({ name: 'Electronics', score: assessment.electronics ?? null });
-    fieldScores.push({ name: 'Signal Processing', score: assessment.signalProcessing ?? null });
-    return fieldScores;
+  // Check if assessment has field-specific skills
+  const hasFieldSkills = (assessment: AssessmentScore) => {
+    return assessment.fieldSkills && Object.keys(assessment.fieldSkills).length > 0;
+  };
+
+  // Get field-specific skills
+  const getFieldSkills = (assessment: AssessmentScore) => {
+    if (!assessment.fieldSkills) return [];
+    return Object.entries(assessment.fieldSkills).map(([name, score]) => ({
+      name: formatSkillName(name),
+      score
+    }));
   };
 
   if (loading) return <div className="text-gray-900">Loading...</div>;
@@ -149,12 +145,12 @@ const CandidateProfile: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Field-Specific Scores */}
-                {hasFieldScores(assessment) && (
+                {/* Field-Specific Skills */}
+                {hasFieldSkills(assessment) && (
                   <div className="mt-4 pt-4 border-t border-gray-100">
                     <h4 className="text-sm font-medium text-gray-700 mb-3">Field-Specific Skills</h4>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                      {getFieldScores(assessment).map((fieldScore, index) => (
+                      {getFieldSkills(assessment).map((fieldScore, index) => (
                         <div key={index} className="text-center">
                           <div className="text-xs text-gray-600 mb-1">{fieldScore.name}</div>
                           <div className={`text-sm font-semibold ${getScoreColor(fieldScore.score)}`}>
