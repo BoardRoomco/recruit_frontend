@@ -1,6 +1,6 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
-import { AssessmentScore, Job } from '../types/assessment';
+import { AssessmentScore } from '../types/assessment';
 
 // API Configuration
 const API_BASE_URL = 'https://recruitbackend-production.up.railway.app/api';
@@ -108,6 +108,25 @@ export interface Application {
       name: string;
     };
   };
+}
+
+export interface Candidate {
+  id: string;
+  name: string;
+  avatar: string;
+  experience: string;
+  education: string;
+  colareScore: number;
+  skills: {
+    technical: number;
+    problemSolving: number;
+    communication: number;
+    fieldSkills?: Record<string, number>;
+  };
+  time: string;
+  date: string;
+  status: 'recommended' | 'review-again' | 'not-interested';
+  hasAssessment: boolean;
 }
 
 // Auth API
@@ -250,6 +269,11 @@ export const jobsAPI = {
   getJobCandidates: async (jobId: string): Promise<Candidate[]> => {
     const response = await api.get(`/jobs/${jobId}/candidates`);
     return response.data.data.candidates;
+  },
+
+  getJobCandidatesWithScores: async (jobId: string): Promise<{ candidates: Candidate[]; totalCandidates: number; candidatesWithAssessments: number }> => {
+    const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
+    return response.data.data;
   }
 };
 

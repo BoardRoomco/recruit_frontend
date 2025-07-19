@@ -19,120 +19,47 @@ interface Candidate {
   time: string;
   date: string;
   status: 'recommended' | 'review-again' | 'not-interested';
+  hasAssessment: boolean;
 }
 
 const JobDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [job, setJob] = useState<Job | null>(null);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Mock candidate data - replace with actual API call
-  const [candidates] = useState<Candidate[]>([
-    {
-      id: '1',
-      name: 'Gianna Binder',
-      avatar: 'GB',
-      experience: '2 years',
-      education: 'Waterloo - Electrical Engineering',
-      colareScore: 92,
-      skills: {
-        technical: 95,
-        problemSolving: 88,
-        communication: 93
-      },
-      time: '2h 15m',
-      date: '2024-01-15',
-      status: 'recommended'
-    },
-    {
-      id: '2',
-      name: 'Sanjitha Vasu',
-      avatar: 'SV',
-      experience: '1 years',
-      education: 'Waterloo - Electrical Engineering',
-      colareScore: 88,
-      skills: {
-        technical: 90,
-        problemSolving: 85,
-        communication: 89
-      },
-      time: '1h 45m',
-      date: '2024-01-14',
-      status: 'review-again'
-    },
-    {
-      id: '3',
-      name: 'Alexsandra Hermary',
-      avatar: 'AH',
-      experience: '2 years',
-      education: 'Waterloo - Electrical Engineering',
-      colareScore: 85,
-      skills: {
-        technical: 82,
-        problemSolving: 90,
-        communication: 87
-      },
-      time: '2h 30m',
-      date: '2024-01-13',
-      status: 'recommended'
-    },
-    {
-      id: '4',
-      name: 'Cindy Yu',
-      avatar: 'ED',
-      experience: '0 years',
-      education: 'University of Toronto - Life Sciences',
-      colareScore: 61,
-      skills: {
-        technical: 47,
-        problemSolving: 65,
-        communication: 70
-      },
-      time: '1h 55m',
-      date: '2024-01-12',
-      status: 'review-again'
-    },
-    {
-      id: '5',
-      name: 'Alima Abbas',
-      avatar: 'DK',
-      experience: '7 years',
-      education: 'University of Toronto - International Business',
-      colareScore: 57,
-      skills: {
-        technical: 12,
-        problemSolving: 78,
-        communication: 80
-      },
-      time: '2h 45m',
-      date: '2024-01-11',
-      status: 'recommended'
-    }
-  ]);
-
   useEffect(() => {
-    const fetchJob = async () => {
+    const fetchJobAndCandidates = async () => {
       if (!id) return;
       
       try {
         setLoading(true);
         console.log('Fetching job with ID:', id);
+        
+        // Fetch job details
         const jobData = await jobsAPI.getById(id);
         console.log('Job data received:', jobData);
         setJob(jobData);
+        
+        // Fetch candidates with assessment scores
+        console.log('Fetching candidates with scores...');
+        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
+        console.log('Candidates data received:', candidatesData);
+        setCandidates(candidatesData.candidates || []);
+        
       } catch (err: any) {
-        console.error('Error fetching job:', err);
+        console.error('Error fetching job or candidates:', err);
         setError(err.response?.data?.message || 'Failed to load job details');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchJob();
+    fetchJobAndCandidates();
   }, [id]);
 
   const filteredCandidates = candidates.filter(candidate => {
@@ -400,48 +327,55 @@ const JobDetail: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredCandidates.map((candidate) => (
-                  <div key={candidate.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <span className="text-sm font-medium text-blue-600">{candidate.avatar}</span>
+                  <tr key={candidate.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10">
+                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span className="text-sm font-medium text-blue-600">{candidate.avatar}</span>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
+                          <div className="text-sm text-gray-500">{candidate.experience}</div>
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <Link 
-                          to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
-                          className="text-sm font-medium text-gray-900 hover:text-[#594CE9] transition-colors duration-200 cursor-pointer"
-                        >
-                          {candidate.name}
-                        </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{candidate.colareScore}%</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`text-sm font-medium ${getScoreColor(candidate.skills.technical)}`}>
+                        {formatScore(candidate.skills.technical)}
                       </div>
-                    </div>
-
-                    {/* Main Assessment Scores */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Technical Accuracy</div>
-                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.technical)}`}>
-                          {formatScore(candidate.skills.technical)}
-                        </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`text-sm font-medium ${getScoreColor(candidate.skills.problemSolving)}`}>
+                        {formatScore(candidate.skills.problemSolving)}
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Problem Solving</div>
-                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.problemSolving)}`}>
-                          {formatScore(candidate.skills.problemSolving)}
-                        </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className={`text-sm font-medium ${getScoreColor(candidate.skills.communication)}`}>
+                        {formatScore(candidate.skills.communication)}
                       </div>
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Communication</div>
-                        <div className={`text-lg font-semibold ${getScoreColor(candidate.skills.communication)}`}>
-                          {formatScore(candidate.skills.communication)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Field-Specific Skills */}
-                    {candidate.skills.fieldSkills && renderFieldSkills(candidate.skills.fieldSkills)}
-                  </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {candidate.time}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(candidate.status)}`}>
+                        {getStatusText(candidate.status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <Link 
+                        to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        View Profile
+                      </Link>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
