@@ -37,13 +37,13 @@ const CandidateProfile: React.FC = () => {
       setTimeout(() => {
         setCandidate({
           id: '1',
-          name: 'Sarah Chen',
-          avatar: 'SC',
-          role: 'Senior Mechanical Engineer',
-          company: 'Tesla',
-          location: 'San Francisco, CA',
-          experience: '6 years experience',
-          education: 'MIT - Mechanical Engineering, MS',
+          name: 'Gianna Binder',
+          avatar: 'GB',
+          role: 'Harware Engineer',
+          company: 'AMD',
+          location: 'Toronto, ON',
+          experience: '2 years experience',
+          education: 'Waterloo - Electrical Engineering, BS',
           colareScore: 92,
           ranking: 'Top 5% of candidates',
           skills: {
@@ -53,35 +53,15 @@ const CandidateProfile: React.FC = () => {
           },
           skillCategories: [
             {
-              name: 'CAD Modeling',
-              percentage: 98,
+              name: 'Schematic Design',
+              percentage: 89,
               description: 'Exceptional 3D modeling skills'
             },
             {
-              name: 'FMEA Analysis',
-              percentage: 94,
+              name: 'Control Theory',
+              percentage: 84,
               description: 'Strong failure mode analysis'
             },
-            {
-              name: 'Thermal Management',
-              percentage: 92,
-              description: 'Good thermal design principles'
-            },
-            {
-              name: 'Material Selection',
-              percentage: 90,
-              description: 'Excellent material knowledge'
-            },
-            {
-              name: 'Prototyping',
-              percentage: 87,
-              description: 'Solid prototyping experience'
-            },
-            {
-              name: 'Design Validation',
-              percentage: 85,
-              description: 'Good validation processes'
-            }
           ]
         });
         setLoading(false);

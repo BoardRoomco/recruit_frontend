@@ -53,10 +53,10 @@ const JobDetail: React.FC = () => {
   const [candidates] = useState<Candidate[]>([
     {
       id: '1',
-      name: 'Sarah Chen',
-      avatar: 'SC',
-      experience: '6 years',
-      education: 'MIT - Mechanical Engineering',
+      name: 'Gianna Binder',
+      avatar: 'GB',
+      experience: '2 years',
+      education: 'Waterloo - Electrical Engineering',
       colareScore: 92,
       skills: {
         technical: 95,
@@ -69,10 +69,10 @@ const JobDetail: React.FC = () => {
     },
     {
       id: '2',
-      name: 'Marcus Rodriguez',
-      avatar: 'MR',
-      experience: '4 years',
-      education: 'Stanford - Mechanical Engineering',
+      name: 'Sanjitha Vasu',
+      avatar: 'SV',
+      experience: '1 years',
+      education: 'Waterloo - Electrical Engineering',
       colareScore: 88,
       skills: {
         technical: 90,
@@ -85,10 +85,10 @@ const JobDetail: React.FC = () => {
     },
     {
       id: '3',
-      name: 'Alex Johnson',
-      avatar: 'AJ',
-      experience: '5 years',
-      education: 'UC Berkeley - Mechanical Engineering',
+      name: 'Alexsandra Hermary',
+      avatar: 'AH',
+      experience: '2 years',
+      education: 'Waterloo - Electrical Engineering',
       colareScore: 85,
       skills: {
         technical: 82,
@@ -101,15 +101,15 @@ const JobDetail: React.FC = () => {
     },
     {
       id: '4',
-      name: 'Emily Davis',
+      name: 'Cindy Yu',
       avatar: 'ED',
-      experience: '3 years',
-      education: 'Georgia Tech - Mechanical Engineering',
-      colareScore: 78,
+      experience: '0 years',
+      education: 'University of Toronto - Life Sciences',
+      colareScore: 61,
       skills: {
-        technical: 75,
-        problemSolving: 82,
-        communication: 85
+        technical: 47,
+        problemSolving: 65,
+        communication: 70
       },
       time: '1h 55m',
       date: '2024-01-12',
@@ -117,15 +117,15 @@ const JobDetail: React.FC = () => {
     },
     {
       id: '5',
-      name: 'David Kim',
+      name: 'Alima Abbas',
       avatar: 'DK',
       experience: '7 years',
-      education: 'Caltech - Mechanical Engineering',
-      colareScore: 95,
+      education: 'University of Toronto - International Business',
+      colareScore: 57,
       skills: {
-        technical: 98,
-        problemSolving: 92,
-        communication: 91
+        technical: 12,
+        problemSolving: 78,
+        communication: 80
       },
       time: '2h 45m',
       date: '2024-01-11',
