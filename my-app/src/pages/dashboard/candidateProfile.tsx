@@ -1,5 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { candidateAPI } from '../../services/api';
+
+interface CandidateData {
+  id: string;
+  name: string;
+  email: string;
+  education: string;
+  currentPosition: string;
+}
+
+interface AssessmentData {
+  id: string;
+  instanceId: string;
+  colareScore: number;
+  coreScores: {
+    technical: number;
+    problemSolving: number;
+    communication: number;
+  };
+  fieldSkills: Array<{
+    name: string;
+    score: number;
+    originalName: string;
+  }>;
+  status: string;
+  completedAt: string;
+}
 
 interface Candidate {
   id: string;
@@ -29,47 +56,58 @@ const CandidateProfile: React.FC = () => {
   const navigate = useNavigate();
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock candidate data - replace with actual API call
   useEffect(() => {
     const fetchCandidate = async () => {
-      // Simulate API call
-      setTimeout(() => {
-        setCandidate({
-          id: '1',
-          name: 'Gianna Binder',
-          avatar: 'GB',
-          role: 'Harware Engineer',
-          company: 'AMD',
-          location: 'Toronto, ON',
-          experience: '2 years experience',
-          education: 'Waterloo - Electrical Engineering, BS',
-          colareScore: 92,
-          ranking: 'Top 5% of candidates',
-          skills: {
-            technical: 95,
-            problemSolving: 88,
-            communication: 93
-          },
-          skillCategories: [
-            {
-              name: 'Schematic Design',
-              percentage: 89,
-              description: 'Exceptional 3D modeling skills'
-            },
-            {
-              name: 'Control Theory',
-              percentage: 84,
-              description: 'Strong failure mode analysis'
-            },
-          ]
-        });
+      if (!candidateId || !jobId) {
+        setError('Missing candidate or job ID');
         setLoading(false);
-      }, 500);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        console.log('Fetching candidate assessment data...');
+        
+        const data = await candidateAPI.getCandidateAssessment(candidateId, jobId);
+        console.log('Candidate assessment data received:', data);
+        
+        // Transform the API data to match the existing UI structure
+        const transformedCandidate: Candidate = {
+          id: data.candidate.id,
+          name: data.candidate.name,
+          avatar: data.candidate.name.split(' ').map(n => n[0]).join(''),
+          role: data.candidate.currentPosition || 'Not specified',
+          company: 'Not specified', // This could be enhanced later
+          location: 'Not specified', // This could be enhanced later
+          experience: data.candidate.currentPosition || 'Not specified',
+          education: data.candidate.education || 'Not specified',
+          colareScore: data.assessment?.colareScore || 0,
+          ranking: data.assessment ? 'Assessment completed' : 'No assessment completed',
+          skills: {
+            technical: data.assessment?.coreScores.technical || 0,
+            problemSolving: data.assessment?.coreScores.problemSolving || 0,
+            communication: data.assessment?.coreScores.communication || 0
+          },
+          skillCategories: data.assessment?.fieldSkills.map(skill => ({
+            name: skill.name,
+            percentage: skill.score,
+            description: `Score in ${skill.name.toLowerCase()}`
+          })) || []
+        };
+        
+        setCandidate(transformedCandidate);
+      } catch (err: any) {
+        console.error('Error fetching candidate data:', err);
+        setError(err.response?.data?.message || 'Failed to load candidate data');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchCandidate();
-  }, [candidateId]);
+  }, [candidateId, jobId]);
 
   if (loading) {
     return (
@@ -77,6 +115,23 @@ const CandidateProfile: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#594CE9] mx-auto"></div>
           <p className="mt-4 text-gray-600 font-['DM_Sans']">Loading candidate profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Fustat']">Error Loading Candidate</h2>
+          <p className="text-gray-600 mb-6 font-['DM_Sans']">{error}</p>
+          <Link
+            to={`/dashboard/jobs/${jobId}`}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#594CE9] hover:bg-[#4D3EF0] font-['DM_Sans']"
+          >
+            Back to Job Details
+          </Link>
         </div>
       </div>
     );
@@ -240,23 +295,31 @@ const CandidateProfile: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6 font-['Fustat']">Skill Categories</h2>
               
-              <div className="space-y-6">
-                {candidate.skillCategories.map((skill, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">{skill.name}</span>
-                      <span className="text-sm font-semibold text-gray-900">{skill.percentage}%</span>
+              {candidate.skillCategories.length > 0 ? (
+                <div className="space-y-6">
+                  {candidate.skillCategories.map((skill, index) => (
+                    <div key={index}>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-700 font-['DM_Sans']">{skill.name}</span>
+                        <span className="text-sm font-semibold text-gray-900">{skill.percentage}%</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2 font-['DM_Sans']">{skill.description}</p>
+                      <div className="w-full bg-gray-200 rounded-full h-1.5">
+                        <div 
+                          className="bg-[#594CE9] h-1.5 rounded-full" 
+                          style={{ width: `${skill.percentage}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mb-2 font-['DM_Sans']">{skill.description}</p>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-[#594CE9] h-1.5 rounded-full" 
-                        style={{ width: `${skill.percentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2">📊</div>
+                  <p className="text-gray-500 font-['DM_Sans']">No field-specific skills available.</p>
+                  <p className="text-sm text-gray-400 font-['DM_Sans']">Field-specific skills will appear here when available.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

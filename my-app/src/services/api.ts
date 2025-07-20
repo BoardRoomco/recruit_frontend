@@ -363,6 +363,37 @@ export const candidateAPI = {
       fieldSkills: score.fieldSkills || {}
     }));
     return { assessmentScores: scores };
+  },
+
+  getCandidateAssessment: async (candidateId: string, jobId: string): Promise<{
+    candidate: {
+      id: string;
+      name: string;
+      email: string;
+      education: string;
+      currentPosition: string;
+    };
+    assessment: {
+      id: string;
+      instanceId: string;
+      colareScore: number;
+      coreScores: {
+        technical: number;
+        problemSolving: number;
+        communication: number;
+      };
+      fieldSkills: Array<{
+        name: string;
+        score: number;
+        originalName: string;
+      }>;
+      status: string;
+      completedAt: string;
+    } | null;
+    hasAssessment: boolean;
+  }> => {
+    const response = await api.get(`/candidates/${candidateId}/assessment/${jobId}`);
+    return response.data.data;
   }
 };
 
