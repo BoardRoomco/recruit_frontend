@@ -75,6 +75,12 @@ const Navigation: React.FC = () => {
             ) : (
               <>
                 <Link
+                  to="/register"
+                  className="text-violet font-dmsans font-medium text-base hover:underline transition"
+                >
+                  Sign Up
+                </Link>
+                <Link
                   to="/login"
                   className="text-violet font-dmsans font-medium text-base hover:underline transition"
                 >

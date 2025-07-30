@@ -13,7 +13,9 @@ import {
   Calendar,
   DotsThreeVertical,
   MagnifyingGlass,
-  FunnelSimple
+  FunnelSimple,
+  PencilSimple,
+  Trash
 } from '@phosphor-icons/react';
 
 interface Job {
@@ -83,6 +85,8 @@ const Dashboard: React.FC = () => {
   const [search, setSearch] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [view, setView] = useState<'card' | 'table'>('card');
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -117,6 +121,18 @@ const Dashboard: React.FC = () => {
     }
   }, [user?.company?.id]);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenMenuId(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-white to-softLavender flex items-center justify-center">
@@ -130,6 +146,29 @@ const Dashboard: React.FC = () => {
       </div>
     );
   }
+
+  const handleDeleteJob = async (jobId: string, jobTitle: string) => {
+    if (!window.confirm(`Are you sure you want to delete "${jobTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeletingJobId(jobId);
+      await jobsAPI.delete(jobId);
+      // Remove the job from the local state
+      setJobs(jobs.filter(job => job.id !== jobId));
+      setOpenMenuId(null);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to delete job');
+    } finally {
+      setDeletingJobId(null);
+    }
+  };
+
+  const toggleMenu = (jobId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === jobId ? null : jobId);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-softLavender py-8">
@@ -303,12 +342,43 @@ const Dashboard: React.FC = () => {
                     <Clock size={12} className="text-gray-400" />
                     {job.status === 'active' ? `${Math.floor(Math.random() * 5) + 1} candidates assessed today` : 'Review due in 2 days'}
                   </div>
-                  <button
-                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition"
-                    onClick={e => { e.stopPropagation(); /* open actions menu here if needed */ }}
-                  >
-                    <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
-                  </button>
+                  
+                  {/* Actions Menu */}
+                  <div className="absolute top-2 right-2">
+                    <button
+                      className="p-1 rounded-full hover:bg-gray-100 transition"
+                      onClick={(e) => toggleMenu(job.id, e)}
+                    >
+                      <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
+                    </button>
+                    
+                    {openMenuId === job.id && (
+                      <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[140px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(null);
+                            navigate(`/dashboard/jobs/${job.id}/edit`);
+                          }}
+                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                        >
+                          <PencilSimple size={14} className="mr-2" />
+                          Edit Job
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteJob(job.id, job.title);
+                          }}
+                          disabled={deletingJobId === job.id}
+                          className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center disabled:opacity-50"
+                        >
+                          <Trash size={14} className="mr-2" />
+                          {deletingJobId === job.id ? 'Deleting...' : 'Delete Job'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
               {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
@@ -335,9 +405,41 @@ const Dashboard: React.FC = () => {
                       <td className="px-3 py-2 text-graphite font-dmsans text-sm">{job._count?.applications || 0}</td>
                       <td className="px-3 py-2 text-graphite font-dmsans text-sm">{new Date(job.createdAt).toLocaleDateString()}</td>
                       <td className="px-3 py-2 text-right">
-                        <button className="p-1.5 rounded-full hover:bg-gray-100 transition" onClick={e => e.stopPropagation()}>
-                          <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
-                        </button>
+                        <div className="relative">
+                          <button 
+                            className="p-1.5 rounded-full hover:bg-gray-100 transition" 
+                            onClick={(e) => toggleMenu(job.id, e)}
+                          >
+                            <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
+                          </button>
+                          
+                          {openMenuId === job.id && (
+                            <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[140px]">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenMenuId(null);
+                                  navigate(`/dashboard/jobs/${job.id}/edit`);
+                                }}
+                                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                              >
+                                <PencilSimple size={14} className="mr-2" />
+                                Edit Job
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteJob(job.id, job.title);
+                                }}
+                                disabled={deletingJobId === job.id}
+                                className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center disabled:opacity-50"
+                              >
+                                <Trash size={14} className="mr-2" />
+                                {deletingJobId === job.id ? 'Deleting...' : 'Delete Job'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
