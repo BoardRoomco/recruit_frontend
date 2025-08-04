@@ -233,9 +233,6 @@ const CandidateProfile: React.FC = () => {
                     View Resume
                   </button>
                 )}
-                <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 font-['DM_Sans']">
-                  View LinkedIn
-                </button>
               </div>
 
               {/* Colare Score Section */}
