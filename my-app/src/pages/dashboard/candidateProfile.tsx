@@ -90,11 +90,13 @@ const CandidateProfile: React.FC = () => {
             problemSolving: data.assessment?.coreScores.problemSolving || 0,
             communication: data.assessment?.coreScores.communication || 0
           },
-          skillCategories: data.assessment?.fieldSkills.map(skill => ({
-            name: skill.name,
-            percentage: skill.score,
-            description: `Score in ${skill.name.toLowerCase()}`
-          })) || []
+          skillCategories: data.assessment?.fieldSkills
+            .filter(skill => !skill.name.toLowerCase().includes('signal processing'))
+            .map(skill => ({
+              name: skill.name,
+              percentage: skill.score,
+              description: `Score in ${skill.name.toLowerCase()}`
+            })) || []
         };
         
         setCandidate(transformedCandidate);
