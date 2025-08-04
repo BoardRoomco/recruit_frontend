@@ -213,16 +213,7 @@ const JobDetail: React.FC = () => {
             </div>
             
 
-            
-            {/* Daily Assessment Count */}
-            <div className="mt-2">
-              <div className="flex items-center text-gray-500">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-sm">5 candidates assessed today</span>
-              </div>
-            </div>
+
           </div>
           
           <p className="text-gray-700 mt-4 max-w-3xl">
