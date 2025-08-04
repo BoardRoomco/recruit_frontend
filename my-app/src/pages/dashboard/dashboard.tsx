@@ -325,7 +325,7 @@ const Dashboard: React.FC = () => {
                       <h3 className="text-sm font-fustat font-bold text-graphite mb-1">{job.title}</h3>
                       <p className="text-xs text-gray-500 font-dmsans">Hardware Engineering • San Francisco, CA</p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium font-dmsans ml-2 ${job.status === 'active' ? 'bg-gray-50 text-gray-700' : 'bg-yellow-50 text-yellow-700'}`}>{job.status === 'active' ? 'Closed' : 'In Review'}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium font-dmsans ml-2 ${job.status === 'active' ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'}`}>{job.status === 'active' ? 'Closed' : 'In Review'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
                     <User size={14} className="text-gray-400" />
@@ -334,14 +334,18 @@ const Dashboard: React.FC = () => {
                   <div className="mt-auto">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-500 font-dmsans">Top candidate</span>
-                      <span className="text-sm font-bold text-graphite font-fustat">{Math.floor(Math.random() * 20) + 80}%</span>
+                      <span className="text-sm font-bold text-graphite font-fustat">
+                        {job.title.toLowerCase().includes('electrical') ? '72' : 
+                         job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? '86' : 
+                         `${Math.floor(Math.random() * 20) + 80}`}
+                      </span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
-                      <div className="h-full bg-gray-300 rounded-full" style={{ width: `${Math.floor(Math.random() * 20) + 80}%` }}></div>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans mt-1">
-                      <Clock size={12} className="text-gray-400" />
-                      {job.status === 'active' ? `${Math.floor(Math.random() * 5) + 1} candidates assessed today` : 'Review due in 2 days'}
+                      <div className="h-full bg-gray-300 rounded-full" style={{ 
+                        width: `${job.title.toLowerCase().includes('electrical') ? 72 : 
+                                job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? 86 : 
+                                Math.floor(Math.random() * 20) + 80}%` 
+                      }}></div>
                     </div>
                   </div>
                   
