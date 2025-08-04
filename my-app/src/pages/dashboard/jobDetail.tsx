@@ -202,8 +202,8 @@ const JobDetail: React.FC = () => {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                Accepting candidates
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                Closed
               </span>
               <div className="flex items-center text-gray-500">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
