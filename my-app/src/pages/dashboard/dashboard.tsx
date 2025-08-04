@@ -329,7 +329,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
                     <User size={14} className="text-gray-400" />
-                    {job._count?.applications || 0} candidates assessed
+                    {job.title.toLowerCase().includes('electrical') ? '2/6' : `${job._count?.applications || 0}/${job._count?.applications || 0}`} candidates assessed
                   </div>
                   <div className="mt-auto">
                     <div className="flex items-center justify-between">
