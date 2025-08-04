@@ -30,7 +30,6 @@ const JobDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     const fetchJobAndCandidates = async () => {
@@ -66,8 +65,7 @@ const JobDetail: React.FC = () => {
     .filter(candidate => {
       const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            candidate.education.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      return matchesSearch;
     })
     .sort((a, b) => b.colareScore - a.colareScore); // Sort by colare score in descending order
 
@@ -262,18 +260,37 @@ const JobDetail: React.FC = () => {
                 </div>
               </div>
               
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="block w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-              >
-                <option value="all">All Status</option>
-                <option value="recommended">Recommended</option>
-                <option value="review-again">Review Again</option>
-                <option value="not-interested">Not Interested</option>
-              </select>
 
-              <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+
+              <button 
+                onClick={() => {
+                  // Create CSV content
+                  const headers = ['Name', 'Colare Score', 'Technical', 'Problem Solving', 'Communication', 'Time'];
+                  const csvContent = [
+                    headers.join(','),
+                    ...filteredCandidates.map(candidate => [
+                      `"${candidate.name}"`,
+                      candidate.colareScore,
+                      candidate.skills.technical,
+                      candidate.skills.problemSolving,
+                      candidate.skills.communication,
+                      `"${candidate.time}"`
+                    ].join(','))
+                  ].join('\n');
+                  
+                  // Create and download file
+                  const blob = new Blob([csvContent], { type: 'text/csv' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${job?.title || 'candidates'}_export.csv`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  window.URL.revokeObjectURL(url);
+                }}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
