@@ -62,12 +62,14 @@ const JobDetail: React.FC = () => {
     fetchJobAndCandidates();
   }, [id]);
 
-  const filteredCandidates = candidates.filter(candidate => {
-    const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         candidate.education.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredCandidates = candidates
+    .filter(candidate => {
+      const matchesSearch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           candidate.education.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || candidate.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => b.colareScore - a.colareScore); // Sort by colare score in descending order
 
   const getStatusColor = (status: string) => {
     switch (status) {
