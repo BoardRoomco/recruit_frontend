@@ -274,6 +274,43 @@ export const jobsAPI = {
   getJobCandidatesWithScores: async (jobId: string): Promise<{ candidates: Candidate[]; totalCandidates: number; candidatesWithAssessments: number }> => {
     const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
     return response.data.data;
+  },
+
+  // Enhanced function to get candidates with both assessment scores and profile data
+  getJobCandidatesWithProfiles: async (jobId: string): Promise<{ candidates: Candidate[]; totalCandidates: number; candidatesWithAssessments: number }> => {
+    // First get the basic candidate data with assessment scores
+    const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
+    const candidatesData = response.data.data;
+    
+    // For each candidate, fetch their profile data
+    const enhancedCandidates = await Promise.all(
+      candidatesData.candidates.map(async (candidate: any) => {
+        try {
+          // Fetch candidate profile data using the same API as candidate profile page
+          const profileResponse = await api.get(`/candidates/${candidate.id}/profile`);
+          const profileData = profileResponse.data.data.candidate;
+          
+          // Merge profile data with assessment data
+          return {
+            ...candidate,
+            name: `${profileData.firstName} ${profileData.lastName}`,
+            experience: profileData.currentPosition || 'Not specified',
+            education: profileData.education || 'Not specified',
+            email: profileData.email || 'Not specified'
+          };
+        } catch (error) {
+          console.error(`Error fetching profile for candidate ${candidate.id}:`, error);
+          // Return original candidate data if profile fetch fails
+          return candidate;
+        }
+      })
+    );
+    
+    return {
+      candidates: enhancedCandidates,
+      totalCandidates: candidatesData.totalCandidates,
+      candidatesWithAssessments: candidatesData.candidatesWithAssessments
+    };
   }
 };
 

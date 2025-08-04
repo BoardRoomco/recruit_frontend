@@ -9,6 +9,7 @@ interface Candidate {
   avatar: string;
   experience: string;
   education: string;
+  email: string;
   colareScore: number;
   skills: {
     technical: number;
@@ -44,9 +45,9 @@ const JobDetail: React.FC = () => {
         console.log('Job data received:', jobData);
         setJob(jobData);
         
-        // Fetch candidates with assessment scores
-        console.log('Fetching candidates with scores...');
-        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
+        // Fetch candidates with both assessment scores and profile data
+        console.log('Fetching candidates with profiles...');
+        const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
         console.log('Candidates data received:', candidatesData);
         setCandidates(candidatesData.candidates || []);
         
@@ -344,7 +345,15 @@ const JobDetail: React.FC = () => {
                           >
                             {candidate.name}
                           </Link>
-                          <div className="text-sm text-gray-500">{candidate.experience}</div>
+                          <div className="text-sm text-gray-500">
+                            {candidate.experience}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {candidate.education}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {candidate.email}
+                          </div>
                         </div>
                       </div>
                     </td>

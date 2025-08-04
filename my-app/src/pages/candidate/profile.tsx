@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { candidateAPI } from '../../services/api';
+import { candidateAPI, profileAPI } from '../../services/api';
 
 interface AssessmentScore {
   id: string;
@@ -20,12 +20,29 @@ const CandidateProfile: React.FC = () => {
   const [assessmentScores, setAssessmentScores] = useState<AssessmentScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    firstName: '',
+    lastName: '',
+    currentPosition: '',
+    education: ''
+  });
+  const [saving, setSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await candidateAPI.getProfile();
         setProfile(data);
+        
+        // Initialize edit form with current data
+        setEditForm({
+          firstName: data.firstName || '',
+          lastName: data.lastName || '',
+          currentPosition: data.currentPosition || '',
+          education: data.education || ''
+        });
         
         // Fetch assessment scores
         console.log('Fetching assessment scores...');
@@ -40,6 +57,76 @@ const CandidateProfile: React.FC = () => {
     };
     fetchProfile();
   }, []);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    // Reset form to original values
+    setEditForm({
+      firstName: profile.firstName || '',
+      lastName: profile.lastName || '',
+      currentPosition: profile.currentPosition || '',
+      education: profile.education || ''
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      console.log('Sending update with data:', {
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        location: editForm.currentPosition
+      });
+      
+      // Send all form data to the permissive backend
+      console.log('Sending form data:', editForm);
+      const updatedProfile = await profileAPI.updateCandidateProfile(editForm);
+      
+      console.log('API returned updated profile:', updatedProfile);
+      
+      // Update local state with the returned data
+      setProfile(updatedProfile);
+      
+      // Also update the edit form with the new data
+      setEditForm({
+        firstName: updatedProfile.firstName || '',
+        lastName: updatedProfile.lastName || '',
+        currentPosition: updatedProfile.currentPosition || updatedProfile.location || '',
+        education: updatedProfile.education || ''
+      });
+      
+      // Refresh profile data from server to ensure we have the latest
+      try {
+        const freshProfile = await candidateAPI.getProfile();
+        setProfile(freshProfile);
+        console.log('Refreshed profile from server:', freshProfile);
+      } catch (refreshErr) {
+        console.error('Error refreshing profile:', refreshErr);
+      }
+      
+      setSuccessMessage('Profile updated successfully!');
+      setIsEditing(false);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setEditForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
 
   const formatScore = (score: number | null) => {
     if (score === null) return 'N/A';
@@ -83,20 +170,121 @@ const CandidateProfile: React.FC = () => {
     <div className="max-w-4xl mx-auto mt-8 p-6 bg-white rounded shadow">
       <h1 className="text-3xl font-bold mb-6 text-gray-900">Candidate Profile</h1>
       
+      {/* Success Message */}
+      {successMessage && (
+        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+          {successMessage}
+        </div>
+      )}
+      
       {/* Basic Profile Information */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Personal Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2 text-gray-900">
-            <div><strong>First Name:</strong> {profile.firstName || 'Not set'}</div>
-            <div><strong>Last Name:</strong> {profile.lastName || 'Not set'}</div>
-            <div><strong>Email:</strong> {profile.email || profile.user?.email || 'Not set'}</div>
-          </div>
-          <div className="space-y-2 text-gray-900">
-            <div><strong>Current Position:</strong> {profile.currentPosition || 'Not set'}</div>
-            <div><strong>Education:</strong> {profile.education || 'Not set'}</div>
-          </div>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">Personal Information</h2>
+          {!isEditing && (
+            <button
+              onClick={handleEdit}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Edit Profile
+            </button>
+          )}
         </div>
+        
+        {isEditing ? (
+          <div className="bg-gray-50 p-6 rounded-lg border">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.firstName}
+                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.lastName}
+                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={profile.email || profile.user?.email || ''}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Current Position
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.currentPosition}
+                    onChange={(e) => handleInputChange('currentPosition', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Education
+                  </label>
+                  <textarea
+                    value={editForm.education}
+                    onChange={(e) => handleInputChange('education', e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={saving}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2 text-gray-900">
+              <div><strong>First Name:</strong> {profile.firstName || 'Not set'}</div>
+              <div><strong>Last Name:</strong> {profile.lastName || 'Not set'}</div>
+              <div><strong>Email:</strong> {profile.email || profile.user?.email || 'Not set'}</div>
+            </div>
+            <div className="space-y-2 text-gray-900">
+              <div><strong>Current Position:</strong> {profile.currentPosition || 'Not set'}</div>
+              <div><strong>Education:</strong> {profile.education || 'Not set'}</div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Assessment Scores Section */}
