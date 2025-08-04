@@ -36,39 +36,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
   return <>{children}</>;
 };
 
-// Home Page Component
-import TitleLogo from './assets/titlelogo.svg';
 
-const HomePage: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Main Section */}
-      <main className="flex-1 flex items-center justify-start px-4 md:px-16 relative overflow-hidden">
-        {/* Soft lavender gradient overlay on the right */}
-        <div className="absolute inset-0 pointer-events-none z-0" style={{background: 'linear-gradient(90deg, rgba(232,230,252,0) 60%, #E8E6FC 100%)'}} />
-        <div className="relative z-10 max-w-2xl py-24">
-          <h1 className="text-4xl md:text-6xl font-fustat font-bold text-graphite mb-8 leading-tight text-left">
-            The only hiring platform<br />built for hardtech.
-          </h1>
-          <p className="max-w-xl text-lg md:text-2xl font-dmsans text-graphite mb-10 text-left">
-            Simulation-based assessments that save engineering time and cut technical mis-hires. We handle everything — from scenario design to candidate ranking — so your team can hire <span className="text-violet font-semibold">faster</span>, and <span className="text-violet font-semibold">smarter</span>.
-          </p>
-          <a
-            href="https://calendly.com/boardroomco/30min"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-violet text-white font-dmsans font-semibold text-lg shadow-lg hover:bg-corePurple transition text-left"
-          >
-            Book a demo
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3" />
-            </svg>
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-};
 
 function App() {
   return (
@@ -78,7 +46,7 @@ function App() {
           <Navigation />
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/jobs" element={<JobList />} />

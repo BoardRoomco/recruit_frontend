@@ -22,9 +22,9 @@ const Navigation: React.FC = () => {
         <div className="flex justify-between h-20 items-center">
           {/* Left: Logo and Browse Jobs */}
           <div className="flex items-center space-x-6">
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <div className="flex-shrink-0 flex items-center">
               <img src={TitleLogo} alt="Colare Logo" className="h-6 w-auto" />
-            </Link>
+            </div>
             {isAuthenticated && user?.role === 'employer' && (
               <>
                 <Link
@@ -32,12 +32,6 @@ const Navigation: React.FC = () => {
                   className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
                 >
                   Dashboard
-                </Link>
-                <Link
-                  to="/dashboard/create"
-                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
-                >
-                  Post Job
                 </Link>
               </>
             )}
