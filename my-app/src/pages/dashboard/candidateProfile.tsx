@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { candidateAPI } from '../../services/api';
+import ResumeModal from '../../components/ResumeModal';
+import { getResumeUrl } from '../../data/resumes';
 
 interface CandidateData {
   id: string;
@@ -58,6 +60,15 @@ const CandidateProfile: React.FC = () => {
   const [candidate, setCandidate] = useState<Candidate | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [resumeModal, setResumeModal] = useState<{
+    isOpen: boolean;
+    candidateName: string;
+    resumeUrl: string;
+  }>({
+    isOpen: false,
+    candidateName: '',
+    resumeUrl: ''
+  });
 
   useEffect(() => {
     const fetchCandidate = async () => {
@@ -206,12 +217,22 @@ const CandidateProfile: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="space-y-3 mb-6">
-                <button className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center font-['DM_Sans']">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Download Resume
-                </button>
+                {candidate && getResumeUrl(candidate.name) && (
+                  <button 
+                    onClick={() => setResumeModal({
+                      isOpen: true,
+                      candidateName: candidate.name,
+                      resumeUrl: getResumeUrl(candidate.name)!
+                    })}
+                    className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center font-['DM_Sans']"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    View Resume
+                  </button>
+                )}
                 <button className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 font-['DM_Sans']">
                   View LinkedIn
                 </button>
@@ -320,6 +341,14 @@ const CandidateProfile: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Resume Modal */}
+      <ResumeModal
+        isOpen={resumeModal.isOpen}
+        onClose={() => setResumeModal({ isOpen: false, candidateName: '', resumeUrl: '' })}
+        candidateName={resumeModal.candidateName}
+        resumeUrl={resumeModal.resumeUrl}
+      />
     </div>
   );
 };
