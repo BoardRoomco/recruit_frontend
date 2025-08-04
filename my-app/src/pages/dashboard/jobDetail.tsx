@@ -314,11 +314,8 @@ const JobDetail: React.FC = () => {
                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                      Communication
                    </th>
-                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                     Time
-                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Time
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -336,13 +333,18 @@ const JobDetail: React.FC = () => {
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
+                          <Link 
+                            to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
+                            className="text-sm font-medium text-gray-900 hover:text-indigo-600 cursor-pointer"
+                          >
+                            {candidate.name}
+                          </Link>
                           <div className="text-sm text-gray-500">{candidate.experience}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{candidate.colareScore}%</div>
+                      <div className="text-sm font-medium text-gray-900">{candidate.colareScore}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className={`text-sm font-medium ${getScoreColor(candidate.skills.technical)}`}>
@@ -361,11 +363,6 @@ const JobDetail: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {candidate.time}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(candidate.status)}`}>
-                        {getStatusText(candidate.status)}
-                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Link 
