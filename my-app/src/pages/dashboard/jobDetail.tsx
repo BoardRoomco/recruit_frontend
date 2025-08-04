@@ -345,9 +345,6 @@ const JobDetail: React.FC = () => {
                           >
                             {candidate.name}
                           </Link>
-                          <div className="text-sm text-gray-500">
-                            {candidate.experience}
-                          </div>
                           <div className="text-xs text-gray-400">
                             {candidate.education}
                           </div>
