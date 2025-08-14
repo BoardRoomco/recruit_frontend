@@ -39,12 +39,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-softLavender flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center">
+          <img src="/waterloologo.png" alt="Waterloo Logo" className="h-16 w-auto mb-6" />
           <h2 className="mt-2 text-center text-3xl font-fustat font-bold text-graphite">Sign In</h2>
         </div>
-        <form className="mt-8 space-y-6 bg-white rounded-2xl shadow-lg p-8" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-10" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-graphite font-dmsans mb-1">
+              <label htmlFor="email" className="block text-sm font-semibold text-graphite font-dmsans mb-2">
                 Email address
               </label>
               <input
@@ -53,13 +54,13 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-graphite placeholder-gray-400 text-graphite font-dmsans focus:outline-none focus:ring-violet focus:border-violet focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-5 py-4 border border-gray-200 placeholder-gray-400 text-graphite font-dmsans focus:outline-none focus:ring-2 focus:ring-violet/20 focus:border-violet focus:z-10 sm:text-sm bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-violet/50"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-graphite font-dmsans mb-1">
+              <label htmlFor="password" className="block text-sm font-semibold text-graphite font-dmsans mb-2">
                 Password
               </label>
               <input
@@ -68,7 +69,7 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-graphite placeholder-gray-400 text-graphite font-dmsans focus:outline-none focus:ring-violet focus:border-violet focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-5 py-4 border border-gray-200 placeholder-gray-400 text-graphite font-dmsans focus:outline-none focus:ring-2 focus:ring-violet/20 focus:border-violet focus:z-10 sm:text-sm bg-white/80 backdrop-blur-sm transition-all duration-200 hover:border-violet/50"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -77,7 +78,7 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-lg font-semibold rounded-lg text-white bg-violet hover:bg-corePurple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet font-dmsans transition"
+              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-violet to-corePurple hover:from-corePurple hover:to-violet focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet font-dmsans transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
             >
               Sign In
             </button>
