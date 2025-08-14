@@ -7,10 +7,6 @@ const Navigation: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  console.log("Navigation: user =", user);
-  console.log("Navigation: isAuthenticated =", isAuthenticated);
-  console.log("Navigation: user?.role =", user?.role);
-
   const handleLogout = () => {
     logout();
     navigate("/login");

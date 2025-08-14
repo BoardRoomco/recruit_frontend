@@ -16,8 +16,12 @@ export default defineConfig({
   server: {
     port: 5173,
     hmr: true,
-    headers: {
-      'Content-Type': 'text/javascript',
-    },
+    proxy: {
+      '/api': {
+        target: 'https://api.colare.co',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
   },
 })
