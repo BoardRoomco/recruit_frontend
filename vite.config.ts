@@ -14,8 +14,10 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5173,
+    hmr: true,
     headers: {
-      'Content-Type': 'application/javascript',
+      'Content-Type': 'text/javascript',
     },
   },
 })

@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Download, Eye } from '@phosphor-icons/react';
+import React from "react";
+import { X, Download, Eye } from "@phosphor-icons/react";
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -8,13 +8,18 @@ interface ResumeModalProps {
   resumeUrl: string;
 }
 
-const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose, candidateName, resumeUrl }) => {
+const ResumeModal: React.FC<ResumeModalProps> = ({
+  isOpen,
+  onClose,
+  candidateName,
+  resumeUrl,
+}) => {
   if (!isOpen) return null;
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = resumeUrl;
-    link.download = `${candidateName.replace(/\s+/g, '-').toLowerCase()}-resume.pdf`;
+    link.download = `${candidateName.replace(/\s+/g, "-").toLowerCase()}-resume.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -61,4 +66,4 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose, candidateNam
   );
 };
 
-export default ResumeModal; 
+export default ResumeModal;

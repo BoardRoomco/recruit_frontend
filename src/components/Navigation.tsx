@@ -1,19 +1,19 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import TitleLogo from '../assets/favicon.png';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import TitleLogo from "../assets/favicon.png";
 
 const Navigation: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  console.log('Navigation: user =', user);
-  console.log('Navigation: isAuthenticated =', isAuthenticated);
-  console.log('Navigation: user?.role =', user?.role);
+  console.log("Navigation: user =", user);
+  console.log("Navigation: isAuthenticated =", isAuthenticated);
+  console.log("Navigation: user?.role =", user?.role);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -25,7 +25,7 @@ const Navigation: React.FC = () => {
             <div className="flex-shrink-0 flex items-center">
               <img src={TitleLogo} alt="Colare Logo" className="h-8 w-auto" />
             </div>
-            {isAuthenticated && user?.role === 'employer' && (
+            {isAuthenticated && user?.role === "employer" && (
               <>
                 <Link
                   to="/dashboard"
@@ -35,7 +35,7 @@ const Navigation: React.FC = () => {
                 </Link>
               </>
             )}
-            {isAuthenticated && user?.role === 'candidate' && (
+            {isAuthenticated && user?.role === "candidate" && (
               <>
                 <Link
                   to="/candidate/profile"
@@ -57,7 +57,10 @@ const Navigation: React.FC = () => {
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600 font-dmsans">
-                  Welcome, {user?.candidate?.firstName || user?.company?.name || user?.email}
+                  Welcome,{" "}
+                  {user?.candidate?.firstName ||
+                    user?.company?.name ||
+                    user?.email}
                 </span>
                 <button
                   onClick={handleLogout}
@@ -87,8 +90,19 @@ const Navigation: React.FC = () => {
                   className="px-4 py-1.5 rounded-md bg-violet text-white font-dmsans font-medium text-sm shadow-sm hover:bg-corePurple transition-colors"
                 >
                   Book a demo
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3 inline ml-1">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-3 h-3 inline ml-1"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.25 6.75L21 10.5m0 0l-3.75 3.75M21 10.5H3"
+                    />
                   </svg>
                 </a>
               </>
@@ -100,4 +114,4 @@ const Navigation: React.FC = () => {
   );
 };
 
-export default Navigation; 
+export default Navigation;

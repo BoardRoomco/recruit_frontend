@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-import { authAPI, type User } from '../services/api';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { authAPI, type User } from "../services/api";
 
 // Define what the AuthContext provides
 interface AuthContextType {
@@ -9,11 +9,23 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  
+
   // Functions
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, role: 'candidate' | 'employer', firstName?: string, lastName?: string, companyName?: string) => Promise<void>;
-  uploadResumeAndParse: (email: string, password: string, role: string, resumeFile: File) => Promise<{
+  register: (
+    email: string,
+    password: string,
+    role: "candidate" | "employer",
+    firstName?: string,
+    lastName?: string,
+    companyName?: string,
+  ) => Promise<void>;
+  uploadResumeAndParse: (
+    email: string,
+    password: string,
+    role: string,
+    resumeFile: File,
+  ) => Promise<{
     sessionId: string;
     parsedData: {
       firstName: string;
@@ -26,7 +38,7 @@ interface AuthContextType {
   }>;
   confirmRegistration: (sessionId: string, parsedData: any) => Promise<void>;
   logout: () => void;
-  
+
   // Utility
   updateUser: (userData: Partial<User>) => void;
 }
@@ -52,18 +64,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const loadSavedAuth = () => {
       try {
-        const savedToken = localStorage.getItem('recruit_auth_token');
-        const savedUser = localStorage.getItem('recruit_user');
-        
+        const savedToken = localStorage.getItem("recruit_auth_token");
+        const savedUser = localStorage.getItem("recruit_user");
+
         if (savedToken && savedUser) {
           setToken(savedToken);
           setUser(JSON.parse(savedUser));
         }
       } catch (error) {
-        console.error('Error loading saved auth:', error);
+        console.error("Error loading saved auth:", error);
         // Clear corrupted data
-        localStorage.removeItem('recruit_auth_token');
-        localStorage.removeItem('recruit_user');
+        localStorage.removeItem("recruit_auth_token");
+        localStorage.removeItem("recruit_user");
       } finally {
         setIsLoading(false);
       }
@@ -77,71 +89,110 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authAPI.login(email, password);
-      
+
       if (response.success) {
         // Store the data
         setUser(response.data.user);
         setToken(response.data.token);
-        
+
         // Save to localStorage (survives page refresh)
-        localStorage.setItem('recruit_auth_token', response.data.token);
-        localStorage.setItem('recruit_user', JSON.stringify(response.data.user));
+        localStorage.setItem("recruit_auth_token", response.data.token);
+        localStorage.setItem(
+          "recruit_user",
+          JSON.stringify(response.data.user),
+        );
       } else {
-        throw new Error(response.message || 'Login failed');
+        throw new Error(response.message || "Login failed");
       }
-      
     } catch (error) {
-      console.error('Login failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
+      console.error("Login failed:", error);
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please check your credentials.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   // Register function - calls your AWS backend
-  const register = async (email: string, password: string, role: 'candidate' | 'employer', firstName?: string, lastName?: string, companyName?: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    role: "candidate" | "employer",
+    firstName?: string,
+    lastName?: string,
+    companyName?: string,
+  ) => {
     setIsLoading(true);
     try {
-      const response = await authAPI.register(email, password, role, firstName, lastName, companyName);
-      
+      const response = await authAPI.register(
+        email,
+        password,
+        role,
+        firstName,
+        lastName,
+        companyName,
+      );
+
       if (response.success) {
         // Store the data
         setUser(response.data.user);
         setToken(response.data.token);
-        
+
         // Save to localStorage
-        localStorage.setItem('recruit_auth_token', response.data.token);
-        localStorage.setItem('recruit_user', JSON.stringify(response.data.user));
+        localStorage.setItem("recruit_auth_token", response.data.token);
+        localStorage.setItem(
+          "recruit_user",
+          JSON.stringify(response.data.user),
+        );
       } else {
-        throw new Error(response.message || 'Registration failed');
+        throw new Error(response.message || "Registration failed");
       }
-      
     } catch (error) {
-      console.error('Registration failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'Registration failed. Please try again.');
+      console.error("Registration failed:", error);
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   // Resume upload and parse function (Step 1)
-  const uploadResumeAndParse = async (email: string, password: string, role: string, resumeFile: File) => {
+  const uploadResumeAndParse = async (
+    email: string,
+    password: string,
+    role: string,
+    resumeFile: File,
+  ) => {
     setIsLoading(true);
     try {
-      const response = await authAPI.uploadResumeAndParse(email, password, role, resumeFile);
-      
+      const response = await authAPI.uploadResumeAndParse(
+        email,
+        password,
+        role,
+        resumeFile,
+      );
+
       if (response.success) {
         return {
           sessionId: response.data.sessionId,
-          parsedData: response.data.parsedData
+          parsedData: response.data.parsedData,
         };
       } else {
-        throw new Error(response.message || 'Resume parsing failed');
+        throw new Error(response.message || "Resume parsing failed");
       }
-      
     } catch (error) {
-      console.error('Resume upload failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'Resume upload failed. Please try again.');
+      console.error("Resume upload failed:", error);
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Resume upload failed. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -152,22 +203,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await authAPI.confirmRegistration(sessionId, parsedData);
-      
+
       if (response.success) {
         // Store the data
         setUser(response.data.user);
         setToken(response.data.token);
-        
+
         // Save to localStorage
-        localStorage.setItem('recruit_auth_token', response.data.token);
-        localStorage.setItem('recruit_user', JSON.stringify(response.data.user));
+        localStorage.setItem("recruit_auth_token", response.data.token);
+        localStorage.setItem(
+          "recruit_user",
+          JSON.stringify(response.data.user),
+        );
       } else {
-        throw new Error(response.message || 'Registration confirmation failed');
+        throw new Error(response.message || "Registration confirmation failed");
       }
-      
     } catch (error) {
-      console.error('Registration confirmation failed:', error);
-      throw new Error(error instanceof Error ? error.message : 'Registration confirmation failed. Please try again.');
+      console.error("Registration confirmation failed:", error);
+      throw new Error(
+        error instanceof Error
+          ? error.message
+          : "Registration confirmation failed. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -177,8 +234,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('recruit_auth_token');
-    localStorage.removeItem('recruit_user');
+    localStorage.removeItem("recruit_auth_token");
+    localStorage.removeItem("recruit_user");
   };
 
   // Update user data
@@ -186,7 +243,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('recruit_user', JSON.stringify(updatedUser));
+      localStorage.setItem("recruit_user", JSON.stringify(updatedUser));
     }
   };
 
@@ -201,21 +258,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     updateUser,
     uploadResumeAndParse,
-    confirmRegistration
+    confirmRegistration,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // Custom hook to use the auth context
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-}; 
+};

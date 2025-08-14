@@ -1,22 +1,22 @@
-import axios from 'axios';
-import type { AxiosInstance, AxiosResponse } from 'axios';
-import { AssessmentScore } from '../types/assessment';
+import axios from "axios";
+import type { AxiosInstance, AxiosResponse } from "axios";
+import { AssessmentScore } from "../types/assessment";
 
 // API Configuration
-const API_BASE_URL = 'https://api.colare.co/api';
+const API_BASE_URL = "https://api.colare.co/api";
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('recruit_auth_token');
+    const token = localStorage.getItem("recruit_auth_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,7 +24,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor for error handling
@@ -33,19 +33,19 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid
-      localStorage.removeItem('recruit_auth_token');
-      localStorage.removeItem('recruit_user');
-      window.location.href = '/login';
+      localStorage.removeItem("recruit_auth_token");
+      localStorage.removeItem("recruit_user");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Types
 export interface User {
   id: string;
   email: string;
-  role: 'candidate' | 'employer';
+  role: "candidate" | "employer";
   candidate?: {
     id: string;
     firstName: string;
@@ -125,34 +125,34 @@ export interface Candidate {
   };
   time: string;
   date: string;
-  status: 'recommended' | 'review-again' | 'not-interested';
+  status: "recommended" | "review-again" | "not-interested";
   hasAssessment: boolean;
 }
 
 // Auth API
 export const authAPI = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post('/auth/login', { email, password });
+    const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
 
   register: async (
-    email: string, 
-    password: string, 
-    role: 'candidate' | 'employer',
+    email: string,
+    password: string,
+    role: "candidate" | "employer",
     firstName?: string,
     lastName?: string,
-    companyName?: string
+    companyName?: string,
   ): Promise<AuthResponse> => {
     const payload = {
       email,
       password,
       role,
-      ...(role === 'candidate' && { firstName, lastName }),
-      ...(role === 'employer' && { companyName })
+      ...(role === "candidate" && { firstName, lastName }),
+      ...(role === "employer" && { companyName }),
     };
-    
-    const response = await api.post('/auth/register', payload);
+
+    const response = await api.post("/auth/register", payload);
     return response.data;
   },
 
@@ -161,7 +161,7 @@ export const authAPI = {
     email: string,
     password: string,
     role: string,
-    resumeFile: File
+    resumeFile: File,
   ): Promise<{
     success: boolean;
     message: string;
@@ -179,13 +179,13 @@ export const authAPI = {
     };
   }> => {
     const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('role', role);
-    formData.append('resumeFile', resumeFile);
-    
-    const response = await api.post('/auth/register/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("role", role);
+    formData.append("resumeFile", resumeFile);
+
+    const response = await api.post("/auth/register/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
@@ -199,17 +199,19 @@ export const authAPI = {
       email: string;
       currentPosition?: string;
       education?: string;
-    }
+    },
   ): Promise<AuthResponse> => {
-    const response = await api.post('/auth/register/confirm', {
+    const response = await api.post("/auth/register/confirm", {
       sessionId,
-      parsedData
+      parsedData,
     });
     return response.data;
   },
 
   // Get session data endpoint
-  getSessionData: async (sessionId: string): Promise<{
+  getSessionData: async (
+    sessionId: string,
+  ): Promise<{
     success: boolean;
     data: {
       email: string;
@@ -227,12 +229,15 @@ export const authAPI = {
   }> => {
     const response = await api.get(`/auth/register/session/${sessionId}`);
     return response.data;
-  }
+  },
 };
 
 // Jobs API
 export const jobsAPI = {
-  getAll: async (page = 1, limit = 10): Promise<{ jobs: Job[]; pagination: any }> => {
+  getAll: async (
+    page = 1,
+    limit = 10,
+  ): Promise<{ jobs: Job[]; pagination: any }> => {
     const response = await api.get(`/jobs?page=${page}&limit=${limit}`);
     return response.data.data;
   },
@@ -248,7 +253,7 @@ export const jobsAPI = {
     requirements?: string;
     assessmentLink?: string;
   }): Promise<{ job: Job }> => {
-    const response = await api.post('/jobs', jobData);
+    const response = await api.post("/jobs", jobData);
     return response.data.data;
   },
 
@@ -271,68 +276,94 @@ export const jobsAPI = {
     return response.data.data.candidates;
   },
 
-  getJobCandidatesWithScores: async (jobId: string): Promise<{ candidates: Candidate[]; totalCandidates: number; candidatesWithAssessments: number }> => {
+  getJobCandidatesWithScores: async (
+    jobId: string,
+  ): Promise<{
+    candidates: Candidate[];
+    totalCandidates: number;
+    candidatesWithAssessments: number;
+  }> => {
     const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
     return response.data.data;
   },
 
   // Enhanced function to get candidates with both assessment scores and profile data
-  getJobCandidatesWithProfiles: async (jobId: string): Promise<{ candidates: Candidate[]; totalCandidates: number; candidatesWithAssessments: number }> => {
+  getJobCandidatesWithProfiles: async (
+    jobId: string,
+  ): Promise<{
+    candidates: Candidate[];
+    totalCandidates: number;
+    candidatesWithAssessments: number;
+  }> => {
     // First get the basic candidate data with assessment scores
     const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
     const candidatesData = response.data.data;
-    
+
     // For each candidate, fetch their profile data
     const enhancedCandidates = await Promise.all(
       candidatesData.candidates.map(async (candidate: any) => {
         try {
           // Fetch candidate profile data using the same API as candidate profile page
-          const profileResponse = await api.get(`/candidates/${candidate.id}/profile`);
+          const profileResponse = await api.get(
+            `/candidates/${candidate.id}/profile`,
+          );
           const profileData = profileResponse.data.data.candidate;
-          
+
           // Merge profile data with assessment data
           return {
             ...candidate,
             name: `${profileData.firstName} ${profileData.lastName}`,
-            experience: profileData.currentPosition || 'Not specified',
-            education: profileData.education || 'Not specified',
-            email: profileData.email || 'Not specified'
+            experience: profileData.currentPosition || "Not specified",
+            education: profileData.education || "Not specified",
+            email: profileData.email || "Not specified",
           };
         } catch (error) {
-          console.error(`Error fetching profile for candidate ${candidate.id}:`, error);
+          console.error(
+            `Error fetching profile for candidate ${candidate.id}:`,
+            error,
+          );
           // Return original candidate data if profile fetch fails
           return candidate;
         }
-      })
+      }),
     );
-    
+
     return {
       candidates: enhancedCandidates,
       totalCandidates: candidatesData.totalCandidates,
-      candidatesWithAssessments: candidatesData.candidatesWithAssessments
+      candidatesWithAssessments: candidatesData.candidatesWithAssessments,
     };
-  }
+  },
 };
 
 // Applications API
 export const applicationsAPI = {
-  apply: async (jobId: string, coverLetter?: string): Promise<{ application: Application }> => {
-    const response = await api.post('/applications', { jobId, coverLetter });
+  apply: async (
+    jobId: string,
+    coverLetter?: string,
+  ): Promise<{ application: Application }> => {
+    const response = await api.post("/applications", { jobId, coverLetter });
     return response.data.data;
   },
 
   getMyApplications: async (): Promise<Application[]> => {
-    const response = await api.get('/candidates/applications');
+    const response = await api.get("/candidates/applications");
     return response.data.data.applications;
   },
 
   getCompanyApplications: async (): Promise<Application[]> => {
-    const response = await api.get('/companies/applications');
+    const response = await api.get("/companies/applications");
     return response.data.data.applications;
   },
 
-  updateStatus: async (applicationId: string, status: string): Promise<{ application: Application }> => {
-    const response = await api.put(`/companies/applications/${applicationId}/status`, { status });
+  updateStatus: async (
+    applicationId: string,
+    status: string,
+  ): Promise<{ application: Application }> => {
+    const response = await api.put(
+      `/companies/applications/${applicationId}/status`,
+      { status },
+    );
     return response.data.data;
   },
 
@@ -344,7 +375,7 @@ export const applicationsAPI = {
 // Profile API
 export const profileAPI = {
   getCandidateProfile: async (): Promise<any> => {
-    const response = await api.get('/candidates/profile');
+    const response = await api.get("/candidates/profile");
     return response.data.data.candidate;
   },
 
@@ -353,12 +384,12 @@ export const profileAPI = {
     lastName?: string;
     location?: string;
   }): Promise<any> => {
-    const response = await api.put('/candidates/profile', profileData);
+    const response = await api.put("/candidates/profile", profileData);
     return response.data.data.candidate;
   },
 
   getCompanyProfile: async (): Promise<any> => {
-    const response = await api.get('/companies/profile');
+    const response = await api.get("/companies/profile");
     return response.data.data.company;
   },
 
@@ -367,7 +398,7 @@ export const profileAPI = {
     description?: string;
     website?: string;
   }): Promise<any> => {
-    const response = await api.put('/companies/profile', profileData);
+    const response = await api.put("/companies/profile", profileData);
     return response.data.data.company;
   },
 };
@@ -375,34 +406,37 @@ export const profileAPI = {
 // Dashboard API
 export const dashboardAPI = {
   getCompanyDashboard: async (): Promise<any> => {
-    const response = await api.get('/companies/dashboard');
+    const response = await api.get("/companies/dashboard");
     return response.data.data;
   },
 
   getCompanyAnalytics: async (): Promise<any> => {
-    const response = await api.get('/companies/analytics');
+    const response = await api.get("/companies/analytics");
     return response.data.data;
   },
 };
 
 export const candidateAPI = {
   getProfile: async () => {
-    const response = await api.get('/candidates/profile');
+    const response = await api.get("/candidates/profile");
     return response.data.data.candidate;
   },
-  
+
   getAssessmentScores: async () => {
-    const response = await api.get('/candidates/assessment-scores');
+    const response = await api.get("/candidates/assessment-scores");
     // Transform any field-specific scores into the new format if needed
     const scores = response.data.data.assessmentScores.map((score: any) => ({
       ...score,
       // If old format scores exist, convert them to fieldSkills format
-      fieldSkills: score.fieldSkills || {}
+      fieldSkills: score.fieldSkills || {},
     }));
     return { assessmentScores: scores };
   },
 
-  getCandidateAssessment: async (candidateId: string, jobId: string): Promise<{
+  getCandidateAssessment: async (
+    candidateId: string,
+    jobId: string,
+  ): Promise<{
     candidate: {
       id: string;
       name: string;
@@ -429,9 +463,11 @@ export const candidateAPI = {
     } | null;
     hasAssessment: boolean;
   }> => {
-    const response = await api.get(`/candidates/${candidateId}/assessment/${jobId}`);
+    const response = await api.get(
+      `/candidates/${candidateId}/assessment/${jobId}`,
+    );
     return response.data.data;
-  }
+  },
 };
 
-export default api; 
+export default api;
