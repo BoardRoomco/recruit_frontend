@@ -334,6 +334,17 @@ export const jobsAPI = {
       candidatesWithAssessments: candidatesData.candidatesWithAssessments,
     };
   },
+
+  // Upload candidate resume for a specific job
+  uploadCandidateResume: async (jobId: string, resumeFile: File): Promise<any> => {
+    const formData = new FormData();
+    formData.append('resumeFile', resumeFile);
+
+    const response = await api.post(`/jobs/${jobId}/upload-candidate-resume`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
 };
 
 // Applications API

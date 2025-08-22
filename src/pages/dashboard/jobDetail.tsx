@@ -30,6 +30,7 @@ const JobDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchJobAndCandidates = async () => {
@@ -137,6 +138,27 @@ const JobDetail: React.FC = () => {
     return 'text-red-600';
   };
 
+  // Handle resume upload
+  const handleResumeUpload = async (file?: File) => {
+    const fileToUpload = file || selectedFile;
+    if (!fileToUpload || !id) return;
+    
+    try {
+      const result = await jobsAPI.uploadCandidateResume(id, fileToUpload);
+      
+      // Refresh candidate list
+      const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
+      setCandidates(candidatesData.candidates || []);
+      
+      // Clear form
+      setSelectedFile(null);
+      
+    } catch (error: any) {
+      // Don't show error messages - just log to console for debugging
+      console.error('Resume upload failed:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -220,6 +242,8 @@ const JobDetail: React.FC = () => {
           </p>
         </div>
 
+
+
         {/* Candidate Leaderboard */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -258,8 +282,9 @@ const JobDetail: React.FC = () => {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    console.log('File selected:', file.name);
-                    // TODO: Handle the file upload
+                    setSelectedFile(file);
+                    // Automatically process the resume when file is selected
+                    handleResumeUpload(file);
                   }
                 }}
                 className="hidden"
@@ -274,8 +299,10 @@ const JobDetail: React.FC = () => {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                Upload Resume
+                Import
               </button>
+              
+
 
               <button 
                 onClick={() => {
