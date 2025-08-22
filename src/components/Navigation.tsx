@@ -31,22 +31,7 @@ const Navigation: React.FC = () => {
                 </Link>
               </>
             )}
-            {isAuthenticated && user?.role === "candidate" && (
-              <>
-                <Link
-                  to="/candidate/profile"
-                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
-                >
-                  Profile
-                </Link>
-                <Link
-                  to="/candidate/applications"
-                  className="text-graphite hover:text-violet px-3 py-2 rounded-full text-base font-medium font-dmsans transition"
-                >
-                  My Applications
-                </Link>
-              </>
-            )}
+
           </div>
           {/* Right: Book a demo and Sign In/Logout */}
           <div className="flex items-center space-x-4">
