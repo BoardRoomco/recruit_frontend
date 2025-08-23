@@ -30,7 +30,6 @@ const JobDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchJobAndCandidates = async () => {
@@ -45,9 +44,9 @@ const JobDetail: React.FC = () => {
         console.log('Job data received:', jobData);
         setJob(jobData);
         
-        // Fetch candidates with both assessment scores and profile data
-        console.log('Fetching candidates with profiles...');
-        const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
+        // Fetch candidates with assessment scores (more reliable than profiles)
+        console.log('Fetching candidates with scores...');
+        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
         console.log('Candidates data received:', candidatesData);
         setCandidates(candidatesData.candidates || []);
         
@@ -138,24 +137,79 @@ const JobDetail: React.FC = () => {
     return 'text-red-600';
   };
 
-  // Handle resume upload
-  const handleResumeUpload = async (file?: File) => {
-    const fileToUpload = file || selectedFile;
-    if (!fileToUpload || !id) return;
+  // Handle multiple resume uploads automatically
+  const handleMultipleResumeUpload = async (files: File[]) => {
+    if (!files.length || !id) return;
     
-    try {
-      const result = await jobsAPI.uploadCandidateResume(id, fileToUpload);
+          try {
+        // Process files sequentially to avoid overwhelming the server
+        for (const file of files) {
+          const result = await jobsAPI.uploadCandidateResume(id, file);
+          
+          // Small delay between uploads
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       
-      // Refresh candidate list
-      const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
-      setCandidates(candidatesData.candidates || []);
+      // Simple refresh of the candidate list
+      try {
+        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
+        
+        if (candidatesData.candidates && candidatesData.candidates.length > 0) {
+          setCandidates(candidatesData.candidates);
+        }
+      } catch (error) {
+        console.error('Failed to refresh candidates:', error);
+      }
       
-      // Clear form
-      setSelectedFile(null);
+
       
     } catch (error: any) {
-      // Don't show error messages - just log to console for debugging
       console.error('Resume upload failed:', error);
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+        
+        const errorMessage = error.response.data?.message || 'Upload failed';
+        alert(`Upload failed: ${errorMessage}`);
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        alert('Upload failed: No response from server. Please check your connection.');
+      } else {
+        console.error('Error message:', error.message);
+        console.error('Error config:', error.config);
+        alert(`Upload failed: ${error.message}`);
+      }
+    }
+  };
+
+  // Handle file selection and automatic upload
+  const handleFileSelection = (files: FileList | null) => {
+    if (!files) return;
+    
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter(file => {
+      const isValidType = file.type.includes('pdf') || file.type.includes('docx');
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
+      
+      if (!isValidType) {
+        alert(`File "${file.name}" is not a supported format. Please use PDF or DOCX.`);
+        return false;
+      }
+      
+      if (!isValidSize) {
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    if (validFiles.length > 0) {
+      // Automatically upload all valid files
+      handleMultipleResumeUpload(validFiles);
     }
   };
 
@@ -279,14 +333,8 @@ const JobDetail: React.FC = () => {
               <input
                 type="file"
                 accept=".pdf,.docx"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    setSelectedFile(file);
-                    // Automatically process the resume when file is selected
-                    handleResumeUpload(file);
-                  }
-                }}
+                multiple
+                onChange={(e) => handleFileSelection(e.target.files)}
                 className="hidden"
                 id="resume-upload"
               />
@@ -340,6 +388,8 @@ const JobDetail: React.FC = () => {
               </button>
             </div>
           </div>
+          
+
 
           {/* Candidates Table */}
           <div className="overflow-x-auto">
