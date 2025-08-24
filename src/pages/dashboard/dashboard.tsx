@@ -177,16 +177,16 @@ const Dashboard: React.FC = () => {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <div>
-              <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Dashboard</h1>
-              <p className="text-graphite font-dmsans text-lg">Here's what's happening with your job assessments</p>
+              <h1 className="text-3xl font-semibold text-gray-900 mb-2">Dashboard</h1>
+              <p className="text-gray-600">Here's what's happening with your job assessments</p>
             </div>
             {/* Removed large Create New Job button here */}
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-6 bg-red-50 border border-red-200 rounded-2xl">
-            <p className="text-red-600 font-dmsans">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600 text-sm">{error}</p>
           </div>
         )}
 
@@ -200,57 +200,177 @@ const Dashboard: React.FC = () => {
             </>
           ) : (
             <>
-              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
-                <div className="p-4 flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
-                      <Briefcase className="h-4 w-4 text-violet" weight="regular" />
+              <div className="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-softLavender rounded-lg flex items-center justify-center">
+                        <Briefcase className="h-5 w-5 text-violet" weight="regular" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="ml-3 w-0 flex-1">
-                    <dl>
-                      <dt className="text-xs font-medium text-graphite font-dmsans">Active Jobs</dt>
-                      <dd className="text-lg font-bold text-graphite font-fustat">
-                        {jobs.filter(job => job.status === 'active').length}
-                      </dd>
-                    </dl>
+                    <div className="ml-3 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-600">Active Jobs</dt>
+                        <dd className="text-2xl font-semibold text-gray-900">
+                          {jobs.filter(job => job.status === 'active').length}
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
-                <div className="p-4 flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
-                      <FileText className="h-4 w-4 text-violet" weight="regular" />
+              <div className="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-softLavender rounded-lg flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-violet" weight="regular" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="ml-3 w-0 flex-1">
-                    <dl>
-                      <dt className="text-xs font-medium text-graphite font-dmsans">Total Candidates</dt>
-                      <dd className="text-lg font-bold text-graphite font-fustat">{applications.length}</dd>
-                    </dl>
+                    <div className="ml-3 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-600">Total Candidates</dt>
+                        <dd className="text-2xl font-semibold text-gray-900">{applications.length}</dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-white overflow-hidden shadow rounded-xl border border-gray-100">
-                <div className="p-4 flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-softLavender rounded-lg flex items-center justify-center">
-                      <Clock className="h-4 w-4 text-violet" weight="regular" />
+              <div className="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-100">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-softLavender rounded-lg flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-violet" weight="regular" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="ml-3 w-0 flex-1">
-                    <dl>
-                      <dt className="text-xs font-medium text-graphite font-dmsans">Pending Reviews</dt>
-                      <dd className="text-lg font-bold text-graphite font-fustat">
-                        {applications.filter(app => app.status === 'submitted').length}
-                      </dd>
-                    </dl>
+                    <div className="ml-3 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-600">Pending Reviews</dt>
+                        <dd className="text-2xl font-semibold text-gray-900">
+                          {applications.filter(app => app.status === 'submitted').length}
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </div>
             </>
           )}
+        </div>
+
+        {/* Candidate Pipeline Funnel and Role Distribution */}
+        <div className="mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Pipeline Funnel - Left Side */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Candidate Pipeline</h3>
+              <div className="max-w-sm mx-auto">
+                <div className="space-y-4">
+                  {/* Applied */}
+                  <div className="flex items-center">
+                    <div className="w-24 text-sm font-medium text-gray-700">Applied</div>
+                    <div className="flex-1 bg-gradient-to-r from-violet to-violet/80 rounded-lg h-8 flex items-center justify-end pr-4">
+                      <span className="text-white font-semibold text-sm">{applications.length}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Assessed */}
+                  <div className="flex items-center">
+                    <div className="w-24 text-sm font-medium text-gray-700">Assessed</div>
+                    <div className="flex-1 bg-gradient-to-r from-violet/80 to-violet/60 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'reviewed').length / applications.length) * 100)}%` }}>
+                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'reviewed').length}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Interviewed */}
+                  <div className="flex items-center">
+                    <div className="w-24 text-sm font-medium text-gray-700">Interviewed</div>
+                    <div className="flex-1 bg-gradient-to-r from-violet/60 to-violet/40 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'interviewed').length / applications.length) * 100)}%` }}>
+                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'interviewed').length}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Offered */}
+                  <div className="flex items-center">
+                    <div className="w-24 text-sm font-medium text-gray-700">Offered</div>
+                    <div className="flex-1 bg-gradient-to-r from-violet/40 to-violet/20 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'offered').length / applications.length) * 100)}%` }}>
+                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'offered').length}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Hired */}
+                  <div className="flex items-center">
+                    <div className="w-24 text-sm font-medium text-gray-700">Hired</div>
+                    <div className="flex-1 bg-gradient-to-r from-violet/20 to-violet/10 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'hired').length / applications.length) * 100)}%` }}>
+                      <span className="text-violet font-semibold text-sm">{applications.filter(app => app.status === 'hired').length}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Role Distribution Pie Chart - Right Side */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Role Distribution</h3>
+              <div className="flex items-center justify-center">
+                {/* Simple Pie Chart Visualization */}
+                <div className="relative w-48 h-48">
+                  {/* Mechanical Engineering */}
+                  <div className="absolute inset-0 rounded-full border-8 border-violet transform rotate-0" style={{ 
+                    clipPath: 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%)',
+                    transform: 'rotate(0deg)'
+                  }}></div>
+                  
+                  {/* Electrical Engineering */}
+                  <div className="absolute inset-0 rounded-full border-8 border-softLavender transform rotate-0" style={{ 
+                    clipPath: 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%, 50% 50%)',
+                    transform: 'rotate(0deg)'
+                  }}></div>
+                  
+                  {/* Civil Engineering */}
+                  <div className="absolute inset-0 rounded-full border-8 border-gray-300 transform rotate-0" style={{ 
+                    clipPath: 'polygon(50% 50%, 50% 0%, 75% 0%, 75% 50%, 50% 50%)',
+                    transform: 'rotate(0deg)'
+                  }}></div>
+                  
+                  {/* Software Engineering */}
+                  <div className="absolute inset-0 rounded-full border-8 border-violet/60 transform rotate-0" style={{ 
+                    clipPath: 'polygon(50% 50%, 50% 0%, 62.5% 0%, 62.5% 50%, 50% 50%)',
+                    transform: 'rotate(0deg)'
+                  }}></div>
+                  
+                  {/* Center Label */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-gray-900">{jobs.length}</div>
+                      <div className="text-xs text-gray-500">Total Jobs</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Legend */}
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-violet rounded-full"></div>
+                  <span className="text-sm text-gray-700">Mechanical</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-softLavender rounded-full"></div>
+                  <span className="text-sm text-gray-700">Electrical</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Civil</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-violet/60 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Software</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* View Toggle and Job Cards/Table Section */}
@@ -262,85 +382,74 @@ const Dashboard: React.FC = () => {
                 placeholder="Search jobs..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full md:w-72 px-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm focus:outline-none focus:ring-1 focus:ring-violet"
+                className="w-full md:w-72 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-violet"
               />
               <button
-                className="flex items-center gap-1 px-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm shadow-sm hover:bg-gray-50 transition"
+                className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm shadow-sm hover:bg-gray-50 transition"
                 onClick={() => setFilterOpen(true)}
               >
-                <FunnelSimple size={18} className="text-gray-500" />
+                <FunnelSimple size={16} className="text-gray-500" />
                 Filter
               </button>
             </div>
             <div className="flex gap-2 items-center">
               <button
-                className={`px-3 py-1.5 rounded-full text-sm font-medium font-dmsans transition ${view === 'card' ? 'bg-gray-100 text-graphite' : 'bg-white text-graphite border border-gray-200'}`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${view === 'card' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-700 border border-gray-200'}`}
                 onClick={() => setView('card')}
               >
                 Card View
               </button>
               <button
-                className={`px-3 py-1.5 rounded-full text-sm font-medium font-dmsans transition ${view === 'table' ? 'bg-gray-100 text-graphite' : 'bg-white text-graphite border border-gray-200'}`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${view === 'table' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-700 border border-gray-200'}`}
                 onClick={() => setView('table')}
               >
                 Table View
               </button>
               <Link
                 to="/dashboard/create"
-                className="inline-flex items-center px-4 py-2 border border-violet rounded-full text-sm font-medium text-violet bg-white hover:bg-violet hover:text-white font-dmsans transition"
+                className="inline-flex items-center px-4 py-2 border border-violet rounded-lg text-sm font-medium text-violet bg-white hover:bg-violet hover:text-white transition"
               >
                 <Plus className="w-4 h-4 mr-1" weight="regular" />
                 New Job Posting
               </Link>
             </div>
           </div>
-          {/* Filter Modal (placeholder) */}
-          {filterOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-              <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-                <h3 className="text-lg font-fustat font-bold text-graphite mb-4">Filter Jobs</h3>
-                <p className="text-graphite font-dmsans mb-6">(Filter options coming soon!)</p>
-                <button
-                  className="px-4 py-2 rounded-full bg-gray-100 text-graphite font-dmsans font-medium hover:bg-gray-200 transition"
-                  onClick={() => setFilterOpen(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
           {view === 'card' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col gap-3 relative group hover:shadow-md transition cursor-pointer"
+                  className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex flex-col gap-3 relative group hover:shadow-md transition cursor-pointer"
                   onClick={() => navigate(`/dashboard/jobs/${job.id}`)}
                   tabIndex={0}
                   role="button"
                   onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate(`/dashboard/jobs/${job.id}`); }}
                 >
-                  <div className="flex items-start justify-between pr-8">
+                  <div className="flex items-start justify-between pr-6">
                     <div className="flex-1">
-                      <h3 className="text-sm font-fustat font-bold text-graphite mb-1">{job.title}</h3>
-                      <p className="text-xs text-gray-500 font-dmsans">Hardware Engineering • San Francisco, CA</p>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-1">{job.title}</h3>
+                      <p className="text-xs text-gray-500">Hardware Engineering • San Francisco, CA</p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium font-dmsans ml-2 ${job.status === 'active' ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'}`}>{job.status === 'active' ? 'Closed' : 'In Review'}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 ${
+                      job.status === 'active' ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'
+                    }`}>
+                      {job.status === 'active' ? 'Closed' : 'In Review'}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
                     <User size={14} className="text-gray-400" />
                     {job.title.toLowerCase().includes('electrical') ? '2/6' : `${job._count?.applications || 0}/${job._count?.applications || 0}`} candidates assessed
                   </div>
                   <div className="mt-auto">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500 font-dmsans">Top candidate</span>
-                      <span className="text-sm font-bold text-graphite font-fustat">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-500">Top candidate</span>
+                      <span className="text-sm font-semibold text-gray-900">
                         {job.title.toLowerCase().includes('electrical') ? '72' : 
                          job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? '86' : 
                          `${Math.floor(Math.random() * 20) + 80}`}
                       </span>
                     </div>
-                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className="h-full bg-gray-300 rounded-full" style={{ 
                         width: `${job.title.toLowerCase().includes('electrical') ? 72 : 
                                 job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? 86 : 
@@ -350,9 +459,9 @@ const Dashboard: React.FC = () => {
                   </div>
                   
                   {/* Actions Menu */}
-                  <div className="absolute top-4 right-2">
+                  <div className="absolute top-4 right-4">
                     <button
-                      className="p-1 rounded-full hover:bg-gray-100 transition"
+                      className="p-1 rounded hover:bg-gray-100 transition"
                       onClick={(e) => toggleMenu(job.id, e)}
                     >
                       <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
@@ -388,7 +497,7 @@ const Dashboard: React.FC = () => {
                 </div>
               ))}
               {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
-                <div className="col-span-full text-center text-graphite font-dmsans text-sm py-8">No jobs found.</div>
+                <div className="col-span-full text-center text-gray-500 text-sm py-8">No jobs found.</div>
               )}
             </div>
           ) : (
@@ -396,24 +505,24 @@ const Dashboard: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-white">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Name</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Candidates</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-graphite font-dmsans">Date Created</th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-graphite font-dmsans">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Candidates</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Date Created</th>
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
                   {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map(job => (
                     <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
-                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">
+                      <td className="px-4 py-3 text-gray-900 font-medium text-sm">
                         <span className="hover:text-violet hover:underline transition">{job.title}</span>
                       </td>
-                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">{job._count?.applications || 0}</td>
-                      <td className="px-3 py-2 text-graphite font-dmsans text-sm">{new Date(job.createdAt).toLocaleDateString()}</td>
-                      <td className="px-3 py-2 text-right">
+                      <td className="px-4 py-3 text-gray-700 text-sm">{job._count?.applications || 0}</td>
+                      <td className="px-4 py-3 text-gray-700 text-sm">{new Date(job.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-right">
                         <div className="relative">
                           <button 
-                            className="p-1.5 rounded-full hover:bg-gray-100 transition" 
+                            className="p-1.5 rounded hover:bg-gray-100 transition" 
                             onClick={(e) => toggleMenu(job.id, e)}
                           >
                             <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
@@ -451,11 +560,27 @@ const Dashboard: React.FC = () => {
                   ))}
                   {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
                     <tr>
-                      <td colSpan={4} className="px-3 py-8 text-center text-graphite font-dmsans text-sm">No jobs found.</td>
+                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500 text-sm">No jobs found.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Filter Modal (placeholder) */}
+          {filterOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter Jobs</h3>
+                <p className="text-gray-600 mb-6">(Filter options coming soon!)</p>
+                <button
+                  className="px-4 py-2 rounded-lg bg-gray-100 text-gray-900 font-medium hover:bg-gray-200 transition"
+                  onClick={() => setFilterOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           )}
         </div>
