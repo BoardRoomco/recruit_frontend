@@ -329,7 +329,7 @@ const JobDetail: React.FC = () => {
               </div>
               
 
-
+              {/* Import Multiple Resumes Button*/}
               <input
                 type="file"
                 accept=".pdf,.docx"
