@@ -38,6 +38,7 @@ interface Application {
     lastName: string;
   };
   job?: {
+    id: string;
     title: string;
   };
 }
@@ -373,216 +374,110 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* View Toggle and Job Cards/Table Section */}
+        {/* Recent Activity Section */}
         <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-6">
-            <div className="flex-1 flex gap-2">
-              <input
-                type="text"
-                placeholder="Search jobs..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full md:w-72 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-violet"
-              />
-              <button
-                className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm shadow-sm hover:bg-gray-50 transition"
-                onClick={() => setFilterOpen(true)}
-              >
-                <FunnelSimple size={16} className="text-gray-500" />
-                Filter
-              </button>
-            </div>
-            <div className="flex gap-2 items-center">
-              <button
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${view === 'card' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-700 border border-gray-200'}`}
-                onClick={() => setView('card')}
-              >
-                Card View
-              </button>
-              <button
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${view === 'table' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-700 border border-gray-200'}`}
-                onClick={() => setView('table')}
-              >
-                Table View
-              </button>
-              <Link
-                to="/dashboard/create"
-                className="inline-flex items-center px-4 py-2 border border-violet rounded-lg text-sm font-medium text-violet bg-white hover:bg-violet hover:text-white transition"
-              >
-                <Plus className="w-4 h-4 mr-1" weight="regular" />
-                New Job Posting
-              </Link>
-            </div>
-          </div>
-          {view === 'card' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 flex flex-col gap-3 relative group hover:shadow-md transition cursor-pointer"
-                  onClick={() => navigate(`/dashboard/jobs/${job.id}`)}
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate(`/dashboard/jobs/${job.id}`); }}
-                >
-                  <div className="flex items-start justify-between pr-6">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">{job.title}</h3>
-                      <p className="text-xs text-gray-500">Hardware Engineering • San Francisco, CA</p>
-                    </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ml-2 ${
-                      job.status === 'active' ? 'bg-red-50 text-red-700' : 'bg-yellow-50 text-yellow-700'
-                    }`}>
-                      {job.status === 'active' ? 'Closed' : 'In Review'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <User size={14} className="text-gray-400" />
-                    {job.title.toLowerCase().includes('electrical') ? '2/6' : `${job._count?.applications || 0}/${job._count?.applications || 0}`} candidates assessed
-                  </div>
-                  <div className="mt-auto">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-500">Top candidate</span>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {job.title.toLowerCase().includes('electrical') ? '72' : 
-                         job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? '86' : 
-                         `${Math.floor(Math.random() * 20) + 80}`}
-                      </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gray-300 rounded-full" style={{ 
-                        width: `${job.title.toLowerCase().includes('electrical') ? 72 : 
-                                job.title.toLowerCase().includes('mechanical') || job.title.toLowerCase().includes('mechatronics') ? 86 : 
-                                Math.floor(Math.random() * 20) + 80}%` 
-                      }}></div>
-                    </div>
-                  </div>
-                  
-                  {/* Actions Menu */}
-                  <div className="absolute top-4 right-4">
-                    <button
-                      className="p-1 rounded hover:bg-gray-100 transition"
-                      onClick={(e) => toggleMenu(job.id, e)}
-                    >
-                      <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
-                    </button>
-                    
-                    {openMenuId === job.id && (
-                      <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[140px]">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenMenuId(null);
-                            navigate(`/dashboard/jobs/${job.id}/edit`);
-                          }}
-                          className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                        >
-                          <PencilSimple size={14} className="mr-2" />
-                          Edit Job
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteJob(job.id, job.title);
-                          }}
-                          disabled={deletingJobId === job.id}
-                          className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center disabled:opacity-50"
-                        >
-                          <Trash size={14} className="mr-2" />
-                          {deletingJobId === job.id ? 'Deleting...' : 'Delete Job'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
-                <div className="col-span-full text-center text-gray-500 text-sm py-8">No jobs found.</div>
-              )}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-100">
-                <thead className="bg-white">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Candidates</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">Date Created</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
-                  {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map(job => (
-                    <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
-                      <td className="px-4 py-3 text-gray-900 font-medium text-sm">
-                        <span className="hover:text-violet hover:underline transition">{job.title}</span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-700 text-sm">{job._count?.applications || 0}</td>
-                      <td className="px-4 py-3 text-gray-700 text-sm">{new Date(job.createdAt).toLocaleDateString()}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="relative">
-                          <button 
-                            className="p-1.5 rounded hover:bg-gray-100 transition" 
-                            onClick={(e) => toggleMenu(job.id, e)}
-                          >
-                            <DotsThreeVertical size={16} weight="regular" className="text-gray-400" />
-                          </button>
-                          
-                          {openMenuId === job.id && (
-                            <div className="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[140px]">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenMenuId(null);
-                                  navigate(`/dashboard/jobs/${job.id}/edit`);
-                                }}
-                                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                              >
-                                <PencilSimple size={14} className="mr-2" />
-                                Edit Job
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteJob(job.id, job.title);
-                                }}
-                                disabled={deletingJobId === job.id}
-                                className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center disabled:opacity-50"
-                              >
-                                <Trash size={14} className="mr-2" />
-                                {deletingJobId === job.id ? 'Deleting...' : 'Delete Job'}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Job Postings - Left Side */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">Recent Job Postings</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-100">
+                  <thead className="bg-gray-50">
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500 text-sm">No jobs found.</td>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidates</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Filter Modal (placeholder) */}
-          {filterOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter Jobs</h3>
-                <p className="text-gray-600 mb-6">(Filter options coming soon!)</p>
-                <button
-                  className="px-4 py-2 rounded-lg bg-gray-100 text-gray-900 font-medium hover:bg-gray-200 transition"
-                  onClick={() => setFilterOpen(false)}
-                >
-                  Close
-                </button>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {jobs.slice(0, 5).map((job) => (
+                      <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            job.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {job.status === 'active' ? 'Active' : 'Draft'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{job._count?.applications || 0}</td>
+                        <td className="px-6 py-4 text-sm text-gray-500">{new Date(job.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                    {jobs.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500 text-sm">No job postings yet</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
+
+            {/* Recent Candidates - Right Side */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900">Recent Candidates</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-100">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied For</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {applications.slice(0, 5).map((application) => (
+                      <tr key={application.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => {
+                        if (application.job?.id) {
+                          navigate(`/dashboard/jobs/${application.job.id}/candidates/${application.id}`);
+                        }
+                      }}>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-softLavender rounded-full flex items-center justify-center">
+                              <span className="text-xs font-semibold text-violet">
+                                {application.candidate?.firstName?.charAt(0)}{application.candidate?.lastName?.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {application.candidate?.firstName} {application.candidate?.lastName}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{application.job?.title || 'Unknown Role'}</td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            application.status === 'submitted' ? 'bg-blue-100 text-blue-800' :
+                            application.status === 'reviewed' ? 'bg-green-100 text-green-800' :
+                            application.status === 'interviewed' ? 'bg-purple-100 text-purple-800' :
+                            application.status === 'offered' ? 'bg-pink-100 text-pink-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {application.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">{new Date(application.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                    {applications.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500 text-sm">No candidates yet</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
