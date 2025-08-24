@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import Navigation from "./components/Navigation";
+import Sidebar from "./components/Sidebar";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 
@@ -13,6 +13,9 @@ import EditJob from "./pages/dashboard/edit";
 import CandidateProfile from "./pages/candidate/profile";
 import CandidateDetailProfile from "./pages/dashboard/candidateProfile";
 import CandidateApps from "./pages/candidate/applications";
+import Candidates from "./pages/dashboard/candidates";
+import Jobs from "./pages/dashboard/jobs";
+import Settings from "./pages/dashboard/settings";
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ 
@@ -43,21 +46,23 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
-          <Navigation />
+          <Sidebar />
           <Routes>
-            {/* Public routes */}
+            {/* Public routes - no sidebar margin */}
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/jobs" element={<JobList />} />
             <Route path="/jobs/:id" element={<JobDetail />} />
 
-            {/* Protected routes for candidates */}
+            {/* Protected routes for candidates - with sidebar margin */}
             <Route 
               path="/candidate/profile" 
               element={
                 <ProtectedRoute allowedRoles={['candidate']}>
-                  <CandidateProfile />
+                  <div className="ml-64">
+                    <CandidateProfile />
+                  </div>
                 </ProtectedRoute>
               } 
             />
@@ -65,17 +70,51 @@ function App() {
               path="/candidate/applications" 
               element={
                 <ProtectedRoute allowedRoles={['candidate']}>
-                  <CandidateApps />
+                  <div className="ml-64">
+                    <CandidateApps />
+                  </div>
                 </ProtectedRoute>
               } 
             />
 
-            {/* Protected routes for employers */}
+            {/* Protected routes for employers - with sidebar margin */}
             <Route 
               path="/dashboard" 
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
-                  <Dashboard />
+                  <div className="ml-64">
+                    <Dashboard />
+                  </div>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard/jobs" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <div className="ml-64">
+                    <Jobs />
+                  </div>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard/candidates" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <div className="ml-64">
+                    <Candidates />
+                  </div>
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard/settings" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <div className="ml-64">
+                    <Settings />
+                  </div>
                 </ProtectedRoute>
               } 
             />
@@ -83,7 +122,9 @@ function App() {
               path="/dashboard/create" 
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
-                  <CreateJob />
+                  <div className="ml-64">
+                    <CreateJob />
+                  </div>
                 </ProtectedRoute>
               } 
             />
@@ -91,7 +132,9 @@ function App() {
               path="/dashboard/jobs/:id" 
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
-                  <JobApplicants />
+                  <div className="ml-64">
+                    <JobApplicants />
+                  </div>
                 </ProtectedRoute>
               } 
             />
@@ -99,7 +142,9 @@ function App() {
               path="/dashboard/jobs/:id/edit" 
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
-                  <EditJob />
+                  <div className="ml-64">
+                    <EditJob />
+                  </div>
                 </ProtectedRoute>
               } 
             />
@@ -107,7 +152,9 @@ function App() {
               path="/dashboard/jobs/:jobId/candidates/:candidateId" 
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
-                  <CandidateDetailProfile />
+                  <div className="ml-64">
+                    <CandidateDetailProfile />
+                  </div>
                 </ProtectedRoute>
               } 
             />
