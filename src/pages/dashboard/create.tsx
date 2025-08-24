@@ -43,8 +43,8 @@ const CreateJob: React.FC = () => {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow rounded-lg p-6">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">Create New Job</h1>
-            <p className="text-gray-600 mt-2">Fill in the details below to create a new job posting.</p>
+            <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Create New Job</h1>
+            <p className="text-graphite font-dmsans text-lg">Fill in the details below to create a new job posting.</p>
           </div>
 
           {error && (

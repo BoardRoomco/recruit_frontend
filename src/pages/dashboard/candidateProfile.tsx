@@ -139,7 +139,7 @@ const CandidateProfile: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Fustat']">Error Loading Candidate</h2>
+          <h2 className="text-2xl font-fustat font-bold text-graphite mb-4">Error Loading Candidate</h2>
           <p className="text-gray-600 mb-6 font-['DM_Sans']">{error}</p>
           <Link
             to={`/dashboard/jobs/${jobId}`}
@@ -156,7 +156,7 @@ const CandidateProfile: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 font-['Fustat']">Candidate Not Found</h2>
+          <h2 className="text-2xl font-fustat font-bold text-graphite mb-4">Candidate Not Found</h2>
           <p className="text-gray-600 mb-6 font-['DM_Sans']">The candidate you are looking for does not exist.</p>
           <Link
             to={`/dashboard/jobs/${jobId}`}

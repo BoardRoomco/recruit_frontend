@@ -103,7 +103,7 @@ const EditJob: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Not Found</h2>
+          <h2 className="text-2xl font-fustat font-bold text-graphite mb-4">Job Not Found</h2>
           <p className="text-gray-600 mb-6">{error || 'The job you are looking for does not exist.'}</p>
           <Link
             to="/dashboard"
@@ -149,8 +149,8 @@ const EditJob: React.FC = () => {
                 </li>
               </ol>
             </nav>
-            <h1 className="text-2xl font-bold text-gray-900">Edit Job</h1>
-            <p className="text-gray-600 mt-2">Update the details for "{job.title}"</p>
+            <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Edit Job</h1>
+            <p className="text-graphite font-dmsans text-lg">Update the details for "{job.title}"</p>
           </div>
 
           {error && (

@@ -178,8 +178,8 @@ const Dashboard: React.FC = () => {
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">Dashboard</h1>
-              <p className="text-gray-600">Here's what's happening with your job assessments</p>
+              <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Dashboard</h1>
+              <p className="text-graphite font-dmsans text-lg">Here's what's happening with your job assessments</p>
             </div>
             {/* Removed large Create New Job button here */}
           </div>
@@ -265,7 +265,7 @@ const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Pipeline Funnel - Left Side */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Candidate Pipeline</h3>
+              <h3 className="text-lg font-fustat font-bold text-graphite mb-6 text-center">Candidate Pipeline</h3>
               <div className="max-w-sm mx-auto">
                 <div className="space-y-4">
                   {/* Applied */}
@@ -313,7 +313,7 @@ const Dashboard: React.FC = () => {
 
             {/* Role Distribution Pie Chart - Right Side */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Role Distribution</h3>
+              <h3 className="text-lg font-fustat font-bold text-graphite mb-6 text-center">Role Distribution</h3>
               <div className="flex items-center justify-center">
                 {/* Simple Pie Chart Visualization */}
                 <div className="relative w-48 h-48">
@@ -380,16 +380,16 @@ const Dashboard: React.FC = () => {
             {/* Recent Job Postings - Left Side */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Job Postings</h3>
+                <h3 className="text-lg font-fustat font-bold text-graphite">Recent Job Postings</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-100">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidates</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidates</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-100">
@@ -399,7 +399,7 @@ const Dashboard: React.FC = () => {
                           <div className="text-sm font-medium text-gray-900">{job.title}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex px-3 py-1.5 rounded-full text-xs font-medium ${
                             job.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                           }`}>
                             {job.status === 'active' ? 'Active' : 'Draft'}
@@ -422,7 +422,7 @@ const Dashboard: React.FC = () => {
             {/* Recent Candidates - Right Side */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Candidates</h3>
+                <h3 className="text-lg font-fustat font-bold text-graphite">Recent Candidates</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-100">
@@ -430,7 +430,6 @@ const Dashboard: React.FC = () => {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied For</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied</th>
                     </tr>
                   </thead>
@@ -443,8 +442,8 @@ const Dashboard: React.FC = () => {
                       }}>
                         <td className="px-6 py-4">
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-softLavender rounded-full flex items-center justify-center">
-                              <span className="text-xs font-semibold text-violet">
+                            <div className="w-10 h-10 bg-softLavender rounded-full flex items-center justify-center">
+                              <span className="text-sm font-semibold text-violet">
                                 {application.candidate?.firstName?.charAt(0)}{application.candidate?.lastName?.charAt(0)}
                               </span>
                             </div>
@@ -454,23 +453,12 @@ const Dashboard: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">{application.job?.title || 'Unknown Role'}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                            application.status === 'submitted' ? 'bg-blue-100 text-blue-800' :
-                            application.status === 'reviewed' ? 'bg-green-100 text-green-800' :
-                            application.status === 'interviewed' ? 'bg-purple-100 text-purple-800' :
-                            application.status === 'offered' ? 'bg-pink-100 text-pink-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {application.status}
-                          </span>
-                        </td>
                         <td className="px-6 py-4 text-sm text-gray-500">{new Date(application.createdAt).toLocaleDateString()}</td>
                       </tr>
                     ))}
                     {applications.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500 text-sm">No candidates yet</td>
+                        <td colSpan={3} className="px-6 py-8 text-center text-gray-500 text-sm">No candidates yet</td>
                       </tr>
                     )}
                   </tbody>
