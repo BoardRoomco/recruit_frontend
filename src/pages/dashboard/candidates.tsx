@@ -75,7 +75,7 @@ const Candidates: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white to-softLavender flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-violet rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse">
             <User className="h-8 w-8 text-white" weight="regular" />
@@ -88,7 +88,7 @@ const Candidates: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-softLavender">
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">

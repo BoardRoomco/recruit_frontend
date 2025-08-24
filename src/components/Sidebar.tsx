@@ -1,19 +1,23 @@
 import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import TitleLogo from "../assets/favicon.png";
+import { useSidebar } from "../context/SidebarContext";
+import TitleLogo from "../assets/titlelogo.svg";
 import { 
   SquaresFour, 
   Briefcase, 
   Users, 
   Gear, 
-  SignOut 
+  SignOut,
+  CaretLeft,
+  CaretRight
 } from '@phosphor-icons/react';
 
 const Sidebar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isCollapsed, setIsCollapsed } = useSidebar();
 
   const handleLogout = () => {
     logout();
@@ -63,19 +67,31 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div className={`fixed left-0 top-0 h-full bg-gray-100 border-r border-gray-200 flex flex-col transition-all duration-300 ${
+      isCollapsed ? 'w-16' : 'w-64'
+    }`}>
       {/* Logo and Company Branding */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center space-x-3">
-          <img src={TitleLogo} alt="Colare Logo" className="h-8 w-auto" />
-          <span className="text-xl font-bold text-gray-900">colare</span>
+      <div className="p-6 border-b border-gray-200 relative">
+        <div className="flex items-center justify-start">
+          <img src={TitleLogo} alt="Colare Logo" className="h-7 w-auto" />
         </div>
+        {/* Collapse Toggle Button */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+        >
+          {isCollapsed ? (
+            <CaretRight className="h-3 w-3 text-gray-600" weight="bold" />
+          ) : (
+            <CaretLeft className="h-3 w-3 text-gray-600" weight="bold" />
+          )}
+        </button>
       </div>
 
       {/* User Profile Section */}
-      <div className="p-6 border-b border-gray-100">
+      <div className="p-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
             {user?.company?.name ? (
               <span className="text-sm font-semibold text-gray-600">
                 {user.company.name.charAt(0).toUpperCase()}
@@ -86,14 +102,16 @@ const Sidebar: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {user?.company?.name || user?.candidate?.firstName || user?.email}
-            </p>
-            <p className="text-xs text-gray-500 truncate">
-              {user?.company?.name ? "Company" : "Candidate"}
-            </p>
-          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.company?.name || user?.candidate?.firstName || user?.email}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.company?.name ? "Company" : "Candidate"}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -111,21 +129,26 @@ const Sidebar: React.FC = () => {
                 to={item.href}
                 className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 }`}
+                title={isCollapsed ? item.name : undefined}
               >
                 <Icon 
-                  className={`mr-3 h-5 w-5 ${
-                    isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-500"
-                  }`} 
+                  className={`h-5 w-5 ${
+                    isActive ? "text-violet" : "text-gray-500 group-hover:text-gray-600"
+                  } ${isCollapsed ? 'mx-auto' : 'mr-3'}`} 
                   weight="regular" 
                 />
-                <span className="flex-1">{item.name}</span>
-                {item.badge && (
-                  <span className="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full min-w-[20px]">
-                    {item.badge}
-                  </span>
+                {!isCollapsed && (
+                  <>
+                    <span className="flex-1">{item.name}</span>
+                    {item.badge && (
+                      <span className="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full min-w-[20px]">
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
                 )}
               </Link>
             );
@@ -133,13 +156,16 @@ const Sidebar: React.FC = () => {
       </nav>
 
       {/* Logout Section */}
-      <div className="p-6 border-t border-gray-100">
+      <div className="p-6">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+          className={`w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors ${
+            isCollapsed ? 'justify-center' : ''
+          }`}
+          title={isCollapsed ? "Sign Out" : undefined}
         >
-          <SignOut className="mr-3 h-5 w-5 text-gray-400" weight="regular" />
-          Sign Out
+          <SignOut className={`h-5 w-5 text-gray-500 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} weight="regular" />
+          {!isCollapsed && "Sign Out"}
         </button>
       </div>
     </div>

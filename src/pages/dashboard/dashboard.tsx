@@ -171,13 +171,13 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-softLavender">
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <div>
-              <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Welcome back, {user?.company?.name}</h1>
+              <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Dashboard</h1>
               <p className="text-graphite font-dmsans text-lg">Here's what's happening with your job assessments</p>
             </div>
             {/* Removed large Create New Job button here */}
