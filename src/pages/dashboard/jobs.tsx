@@ -32,11 +32,11 @@ const Jobs: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [view, setView] = useState<'card' | 'table'>('card'); // Added view state
+  const [view, setView] = useState<'card' | 'table'>('card');
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -56,7 +56,6 @@ const Jobs: React.FC = () => {
     }
   }, [user?.company?.id]);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setOpenMenuId(null);
@@ -69,9 +68,7 @@ const Jobs: React.FC = () => {
   }, []);
 
   const handleDeleteJob = async (jobId: string, jobTitle: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${jobTitle}"? This action cannot be undone.`)) {
-      return;
-    }
+    if (!confirm(`Are you sure you want to delete "${jobTitle}"?`)) return;
 
     try {
       setDeletingJobId(jobId);
@@ -138,13 +135,23 @@ const Jobs: React.FC = () => {
                   className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm focus:outline-none focus:ring-1 focus:ring-violet"
                 />
               </div>
-              <button
-                className="flex items-center gap-1 px-4 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm shadow-sm hover:bg-gray-50 transition"
-                onClick={() => setFilterOpen(true)}
-              >
-                <FunnelSimple size={18} className="text-gray-500" />
-                Filter
-              </button>
+              <div className="relative">
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive')}
+                  className="appearance-none pl-10 pr-8 py-2 rounded-full border border-gray-200 bg-white text-graphite font-dmsans text-sm shadow-sm hover:bg-gray-50 transition focus:outline-none focus:ring-1 focus:ring-violet cursor-pointer"
+                >
+                  <option value="all">All Jobs</option>
+                  <option value="active">Active Only</option>
+                  <option value="inactive">Inactive Only</option>
+                </select>
+                <FunnelSimple size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,22 +159,6 @@ const Jobs: React.FC = () => {
         {/* Jobs Grid/Table */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-6">
-            <div className="flex-1 flex gap-2">
-              <input
-                type="text"
-                placeholder="Search jobs..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full md:w-72 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-violet"
-              />
-              <button
-                className="flex items-center gap-1 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm shadow-sm hover:bg-gray-50 transition"
-                onClick={() => setFilterOpen(true)}
-              >
-                <FunnelSimple size={16} className="text-gray-500" />
-                Filter
-              </button>
-            </div>
             <div className="flex gap-2 items-center">
               <button
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition ${view === 'card' ? 'bg-gray-100 text-gray-900' : 'bg-white text-gray-700 border border-gray-200'}`}
@@ -187,7 +178,13 @@ const Jobs: React.FC = () => {
           {view === 'card' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {jobs
-                .filter(job => job.title.toLowerCase().includes(search.toLowerCase()))
+                .filter(job => {
+                  const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
+                  const matchesStatus = filterStatus === 'all' || 
+                    (filterStatus === 'active' && job.status === 'active') ||
+                    (filterStatus === 'inactive' && job.status !== 'active');
+                  return matchesSearch && matchesStatus;
+                })
                 .map((job) => (
                   <div
                     key={job.id}
@@ -266,7 +263,13 @@ const Jobs: React.FC = () => {
                   </div>
                 ))}
               
-              {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+              {jobs.filter(job => {
+                const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
+                const matchesStatus = filterStatus === 'all' || 
+                  (filterStatus === 'active' && job.status === 'active') ||
+                  (filterStatus === 'inactive' && job.status !== 'active');
+                return matchesSearch && matchesStatus;
+              }).length === 0 && (
                 <div className="col-span-full text-center text-gray-500 text-sm py-8">
                   {search ? 'No jobs found matching your search.' : 'No jobs found.'}
                 </div>
@@ -287,7 +290,13 @@ const Jobs: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-100">
-                    {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).map(job => (
+                    {jobs.filter(job => {
+                      const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
+                      const matchesStatus = filterStatus === 'all' || 
+                        (filterStatus === 'active' && job.status === 'active') ||
+                        (filterStatus === 'inactive' && job.status !== 'active');
+                      return matchesSearch && matchesStatus;
+                    }).map(job => (
                       <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
                         <td className="px-6 py-4">
                           <div>
@@ -365,7 +374,13 @@ const Jobs: React.FC = () => {
                         </td>
                       </tr>
                     ))}
-                    {jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+                    {jobs.filter(job => {
+                      const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
+                      const matchesStatus = filterStatus === 'all' || 
+                        (filterStatus === 'active' && job.status === 'active') ||
+                        (filterStatus === 'inactive' && job.status !== 'active');
+                      return matchesSearch && matchesStatus;
+                    }).length === 0 && (
                       <tr>
                         <td colSpan={6} className="px-6 py-12 text-center text-gray-500 text-sm">
                           {search ? 'No jobs found matching your search.' : 'No jobs found.'}
@@ -380,20 +395,7 @@ const Jobs: React.FC = () => {
         </div>
 
         {/* Filter Modal */}
-        {filterOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-            <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
-              <h3 className="text-lg font-fustat font-bold text-graphite mb-4">Filter Jobs</h3>
-              <p className="text-graphite font-dmsans mb-6">(Filter options coming soon!)</p>
-              <button
-                className="px-4 py-2 rounded-full bg-gray-100 text-graphite font-dmsans font-medium hover:bg-gray-200 transition"
-                onClick={() => setFilterOpen(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
+        {/* This block was removed as per the edit hint */}
       </div>
     </div>
   );
