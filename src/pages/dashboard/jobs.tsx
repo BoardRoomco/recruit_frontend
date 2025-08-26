@@ -42,8 +42,52 @@ const Jobs: React.FC = () => {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const data = await jobsAPI.getByCompany(user?.company?.id || '');
-        setJobs(data);
+        
+        // Fake Rivian job data
+        const fakeJobs: Job[] = [
+          {
+            id: '1',
+            title: 'Sr. Battery Test Technician III',
+            description: 'Lead battery testing and validation for electric vehicle systems',
+            status: 'active',
+            createdAt: '2024-01-15T10:00:00Z',
+            _count: { applications: 260 }
+          },
+          {
+            id: '2', 
+            title: 'Sr. Mechanical Engineer, Mechanisms',
+            description: 'Design and develop mechanical systems and mechanisms',
+            status: 'active',
+            createdAt: '2024-01-10T10:00:00Z',
+            _count: { applications: 170 }
+          },
+          {
+            id: '3',
+            title: 'Validation Engineer, Chassis',
+            description: 'Validate chassis systems and components for vehicle performance',
+            status: 'active', 
+            createdAt: '2024-01-05T10:00:00Z',
+            _count: { applications: 172 }
+          },
+          {
+            id: '4',
+            title: 'Controls Test Engineer',
+            description: 'Test and validate control systems for autonomous vehicles',
+            status: 'active',
+            createdAt: '2024-01-03T10:00:00Z', 
+            _count: { applications: 45 }
+          },
+          {
+            id: '5',
+            title: 'Electronics Design Industrialization Manager',
+            description: 'Lead electronics design industrialization processes',
+            status: 'active',
+            createdAt: '2024-01-01T10:00:00Z',
+            _count: { applications: 96 }
+          }
+        ];
+        
+        setJobs(fakeJobs);
       } catch (err: any) {
         console.error('Failed to load jobs:', err);
       } finally {
@@ -51,9 +95,7 @@ const Jobs: React.FC = () => {
       }
     };
 
-    if (user?.company?.id) {
-      fetchJobs();
-    }
+    fetchJobs();
   }, [user?.company?.id]);
 
   useEffect(() => {
@@ -194,7 +236,22 @@ const Jobs: React.FC = () => {
                     <div className="flex items-start justify-between pr-8 mb-3">
                       <div className="flex-1">
                         <h3 className="text-sm font-semibold text-gray-900 mb-1">{job.title}</h3>
-                        <p className="text-xs text-gray-500">Hardware Engineering • San Francisco, CA</p>
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 font-medium">Location</span>
+                            <span className="text-xs text-gray-500 font-medium">Category</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-700">
+                              {job.id === '1' ? 'Tustin, California US' :
+                               job.id === '2' ? 'Irvine, California US' :
+                               job.id === '3' ? 'Irvine, California US' :
+                               job.id === '4' ? 'Palo Alto, California US' :
+                               job.id === '5' ? 'Torrance, California US' : 'California, US'}
+                            </span>
+                            <span className="text-xs text-gray-700">Mechanical & Electrical Engineering</span>
+                          </div>
+                        </div>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium font-dmsans ml-2 ${
                         job.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'

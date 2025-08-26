@@ -38,22 +38,96 @@ const JobDetail: React.FC = () => {
       
       try {
         setLoading(true);
-        console.log('Fetching job with ID:', id);
         
-        // Fetch job details
-        const jobData = await jobsAPI.getById(id);
-        console.log('Job data received:', jobData);
-        setJob(jobData);
-        
-        // Fetch candidates with both assessment scores and profile data
-        console.log('Fetching candidates with profiles...');
-        const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
-        console.log('Candidates data received:', candidatesData);
-        setCandidates(candidatesData.candidates || []);
+        // Hardcoded job data for Sr. Battery Test Technician III
+        if (id === '1') {
+          const fakeJob: Job = {
+            id: '1',
+            title: 'Sr. Battery Test Technician III',
+            description: 'Lead battery testing and validation for electric vehicle systems. Work with cutting-edge battery technology and ensure quality standards for Rivian\'s electric vehicles.',
+            requirements: 'Bachelor\'s degree in Electrical Engineering, Mechanical Engineering, or related field. 5+ years of experience in battery testing and validation. Experience with high-voltage systems and safety protocols.',
+            assessmentLink: '/assessment/battery-test',
+            assessmentField: 'electrical',
+            status: 'active',
+            companyId: 'rivian-1',
+            createdAt: '2024-01-15T10:00:00Z',
+            updatedAt: '2024-01-15T10:00:00Z',
+            company: {
+              id: 'rivian-1',
+              name: 'Rivian',
+              description: 'Electric vehicle manufacturer',
+              website: 'https://rivian.com'
+            },
+            _count: {
+              applications: 260
+            }
+          };
+          
+          // Hardcoded candidate data with many more candidates
+          const fakeCandidates: Candidate[] = [
+            {
+              id: '1',
+              name: 'Ahmed Osman',
+              avatar: 'AO',
+              experience: '7 years',
+              education: 'Stanford University',
+              email: 'ahmed.osman@email.com',
+              colareScore: 94,
+              skills: { technical: 96, problemSolving: 92, communication: 94 },
+              time: '2 days ago',
+              date: '2024-01-20',
+              status: 'recommended',
+              hasAssessment: true
+            },
+            { id: '2', name: 'Sarah Chen', avatar: 'SC', experience: '6 years', education: 'UC Berkeley', email: 'sarah.chen@email.com', colareScore: 91, skills: { technical: 93, problemSolving: 89, communication: 91 }, time: '3 days ago', date: '2024-01-19', status: 'recommended', hasAssessment: true },
+            { id: '3', name: 'Marcus Rodriguez', avatar: 'MR', experience: '8 years', education: 'MIT', email: 'marcus.rodriguez@email.com', colareScore: 89, skills: { technical: 91, problemSolving: 88, communication: 89 }, time: '4 days ago', date: '2024-01-18', status: 'recommended', hasAssessment: true },
+            { id: '4', name: 'Jennifer Liu', avatar: 'JL', experience: '5 years', education: 'Caltech', email: 'jennifer.liu@email.com', colareScore: 87, skills: { technical: 89, problemSolving: 86, communication: 87 }, time: '5 days ago', date: '2024-01-17', status: 'review-again', hasAssessment: true },
+            { id: '5', name: 'David Park', avatar: 'DP', experience: '4 years', education: 'UCLA', email: 'david.park@email.com', colareScore: 84, skills: { technical: 86, problemSolving: 83, communication: 84 }, time: '6 days ago', date: '2024-01-16', status: 'review-again', hasAssessment: true },
+            { id: '6', name: 'Maria Garcia', avatar: 'MG', experience: '6 years', education: 'Georgia Tech', email: 'maria.garcia@email.com', colareScore: 82, skills: { technical: 84, problemSolving: 81, communication: 82 }, time: '1 week ago', date: '2024-01-15', status: 'review-again', hasAssessment: true },
+            { id: '7', name: 'James Wilson', avatar: 'JW', experience: '5 years', education: 'Carnegie Mellon', email: 'james.wilson@email.com', colareScore: 80, skills: { technical: 82, problemSolving: 79, communication: 80 }, time: '1 week ago', date: '2024-01-14', status: 'review-again', hasAssessment: true },
+            { id: '8', name: 'Priya Patel', avatar: 'PP', experience: '7 years', education: 'University of Michigan', email: 'priya.patel@email.com', colareScore: 88, skills: { technical: 90, problemSolving: 87, communication: 88 }, time: '1 week ago', date: '2024-01-13', status: 'recommended', hasAssessment: true },
+            { id: '9', name: 'Robert Kim', avatar: 'RK', experience: '4 years', education: 'UCSD', email: 'robert.kim@email.com', colareScore: 78, skills: { technical: 80, problemSolving: 77, communication: 78 }, time: '1 week ago', date: '2024-01-12', status: 'not-interested', hasAssessment: true },
+            { id: '10', name: 'Emily Zhang', avatar: 'EZ', experience: '6 years', education: 'Northwestern', email: 'emily.zhang@email.com', colareScore: 85, skills: { technical: 87, problemSolving: 84, communication: 85 }, time: '1 week ago', date: '2024-01-11', status: 'review-again', hasAssessment: true },
+            { id: '11', name: 'Michael Brown', avatar: 'MB', experience: '8 years', education: 'Purdue', email: 'michael.brown@email.com', colareScore: 83, skills: { technical: 85, problemSolving: 82, communication: 83 }, time: '1 week ago', date: '2024-01-10', status: 'review-again', hasAssessment: true },
+            { id: '12', name: 'Lisa Thompson', avatar: 'LT', experience: '5 years', education: 'UT Austin', email: 'lisa.thompson@email.com', colareScore: 81, skills: { technical: 83, problemSolving: 80, communication: 81 }, time: '2 weeks ago', date: '2024-01-09', status: 'review-again', hasAssessment: true },
+            { id: '13', name: 'Kevin Lee', avatar: 'KL', experience: '3 years', education: 'UC Irvine', email: 'kevin.lee@email.com', colareScore: 76, skills: { technical: 78, problemSolving: 75, communication: 76 }, time: '2 weeks ago', date: '2024-01-08', status: 'not-interested', hasAssessment: true },
+            { id: '14', name: 'Anna Petrov', avatar: 'AP', experience: '7 years', education: 'Virginia Tech', email: 'anna.petrov@email.com', colareScore: 86, skills: { technical: 88, problemSolving: 85, communication: 86 }, time: '2 weeks ago', date: '2024-01-07', status: 'recommended', hasAssessment: true },
+            { id: '15', name: 'Daniel Martinez', avatar: 'DM', experience: '4 years', education: 'Arizona State', email: 'daniel.martinez@email.com', colareScore: 79, skills: { technical: 81, problemSolving: 78, communication: 79 }, time: '2 weeks ago', date: '2024-01-06', status: 'not-interested', hasAssessment: true },
+            { id: '16', name: 'Rachel Johnson', avatar: 'RJ', experience: '6 years', education: 'Penn State', email: 'rachel.johnson@email.com', colareScore: 84, skills: { technical: 86, problemSolving: 83, communication: 84 }, time: '2 weeks ago', date: '2024-01-05', status: 'review-again', hasAssessment: true },
+            { id: '17', name: 'Alex Chen', avatar: 'AC', experience: '5 years', education: 'UC Davis', email: 'alex.chen@email.com', colareScore: 82, skills: { technical: 84, problemSolving: 81, communication: 82 }, time: '2 weeks ago', date: '2024-01-04', status: 'review-again', hasAssessment: true },
+            { id: '18', name: 'Samantha Taylor', avatar: 'ST', experience: '7 years', education: 'Oregon State', email: 'samantha.taylor@email.com', colareScore: 87, skills: { technical: 89, problemSolving: 86, communication: 87 }, time: '2 weeks ago', date: '2024-01-03', status: 'recommended', hasAssessment: true },
+            { id: '19', name: 'Ryan Murphy', avatar: 'RM', experience: '3 years', education: 'Colorado State', email: 'ryan.murphy@email.com', colareScore: 75, skills: { technical: 77, problemSolving: 74, communication: 75 }, time: '3 weeks ago', date: '2024-01-02', status: 'not-interested', hasAssessment: true },
+            { id: '20', name: 'Grace Wong', avatar: 'GW', experience: '6 years', education: 'Washington State', email: 'grace.wong@email.com', colareScore: 83, skills: { technical: 85, problemSolving: 82, communication: 83 }, time: '3 weeks ago', date: '2024-01-01', status: 'review-again', hasAssessment: true }
+          ];
+          
+          setJob(fakeJob);
+          setCandidates(fakeCandidates);
+        } else {
+          // For other job IDs, show a basic job structure
+          setJob({
+            id: id,
+            title: 'Job Details',
+            description: 'Job details will be available soon.',
+            requirements: 'Requirements will be available soon.',
+            status: 'active',
+            companyId: 'rivian-1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            company: {
+              id: 'rivian-1',
+              name: 'Rivian',
+              description: 'Electric vehicle manufacturer'
+            },
+            _count: {
+              applications: 0
+            }
+          });
+          setCandidates([]);
+        }
         
       } catch (err: any) {
-        console.error('Error fetching job or candidates:', err);
-        setError(err.response?.data?.message || 'Failed to load job details');
+        console.error('Error loading job details:', err);
+        setError('Failed to load job details');
       } finally {
         setLoading(false);
       }

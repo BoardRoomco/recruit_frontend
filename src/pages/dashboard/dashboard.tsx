@@ -97,10 +97,123 @@ const Dashboard: React.FC = () => {
         setStatsLoading(true);
         setTableLoading(true);
         
-        // Simulate progressive loading for better UX
+        // Fake Rivian job data
+        const fakeJobs: Job[] = [
+          {
+            id: '1',
+            title: 'Sr. Battery Test Technician III',
+            description: 'Lead battery testing and validation for electric vehicle systems',
+            status: 'active',
+            createdAt: '2024-01-15T10:00:00Z',
+            _count: { applications: 260 }
+          },
+          {
+            id: '2', 
+            title: 'Sr. Mechanical Engineer, Mechanisms',
+            description: 'Design and develop mechanical systems and mechanisms',
+            status: 'active',
+            createdAt: '2024-01-10T10:00:00Z',
+            _count: { applications: 170 }
+          },
+          {
+            id: '3',
+            title: 'Validation Engineer, Chassis',
+            description: 'Validate chassis systems and components for vehicle performance',
+            status: 'active', 
+            createdAt: '2024-01-05T10:00:00Z',
+            _count: { applications: 172 }
+          },
+          {
+            id: '4',
+            title: 'Controls Test Engineer',
+            description: 'Test and validate control systems for autonomous vehicles',
+            status: 'active',
+            createdAt: '2024-01-03T10:00:00Z', 
+            _count: { applications: 45 }
+          },
+          {
+            id: '5',
+            title: 'Electronics Design Industrialization Manager',
+            description: 'Lead electronics design industrialization processes',
+            status: 'active',
+            createdAt: '2024-01-01T10:00:00Z',
+            _count: { applications: 96 }
+          }
+        ];
+
+        // Fake applications data
+        const fakeApplications: Application[] = [
+          {
+            id: '1',
+            status: 'pending',
+            createdAt: '2024-01-20T10:00:00Z',
+            candidate: {
+              firstName: 'Ahmed',
+              lastName: 'Osman'
+            },
+            job: {
+              id: '1',
+              title: 'Sr. Battery Test Technician III'
+            }
+          },
+          {
+            id: '2',
+            status: 'pending',
+            createdAt: '2024-01-19T10:00:00Z',
+            candidate: {
+              firstName: 'Anush',
+              lastName: 'Jayanthan'
+            },
+            job: {
+              id: '2',
+              title: 'Sr. Mechanical Engineer, Mechanisms'
+            }
+          },
+          {
+            id: '3',
+            status: 'pending',
+            createdAt: '2024-01-18T10:00:00Z',
+            candidate: {
+              firstName: 'Graeme',
+              lastName: 'Begg'
+            },
+            job: {
+              id: '3',
+              title: 'Validation Engineer, Chassis'
+            }
+          },
+          {
+            id: '4',
+            status: 'pending',
+            createdAt: '2024-01-17T10:00:00Z',
+            candidate: {
+              firstName: 'Joseph',
+              lastName: 'Jabile'
+            },
+            job: {
+              id: '4',
+              title: 'Controls Test Engineer'
+            }
+          },
+          {
+            id: '5',
+            status: 'pending',
+            createdAt: '2024-01-16T10:00:00Z',
+            candidate: {
+              firstName: 'Mark',
+              lastName: 'Khairallah'
+            },
+            job: {
+              id: '5',
+              title: 'Electronics Design Industrialization Manager'
+            }
+          }
+        ];
+        
+        // Simulate API calls with fake data
         const [jobsData, applicationsData] = await Promise.all([
-          jobsAPI.getByCompany(user?.company?.id || ''),
-          applicationsAPI.getCompanyApplications()
+          Promise.resolve(fakeJobs),
+          Promise.resolve(fakeApplications)
         ]);
         
         setJobs(jobsData);

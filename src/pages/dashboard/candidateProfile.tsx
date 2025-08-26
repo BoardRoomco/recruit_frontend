@@ -80,42 +80,92 @@ const CandidateProfile: React.FC = () => {
 
       try {
         setLoading(true);
-        console.log('Fetching candidate assessment data...');
         
-        const data = await candidateAPI.getCandidateAssessment(candidateId, jobId);
-        console.log('Candidate assessment data received:', data);
+        // Hardcoded data for Ahmed Osman (candidate ID '1')
+        if (candidateId === '1' && jobId === '1') {
+          const ahmedData: Candidate = {
+            id: '1',
+            name: 'Ahmed Osman',
+            avatar: 'AO',
+            role: 'Senior Battery Systems Engineer',
+            company: 'Tesla (Previous)',
+            location: 'Palo Alto, CA',
+            experience: '7 years in battery systems and EV technology',
+            education: 'MS Electrical Engineering, Stanford University',
+            email: 'ahmed.osman@email.com',
+            colareScore: 94,
+            ranking: 'Top 1% - Highly Recommended',
+            skills: {
+              technical: 96,
+              problemSolving: 92,
+              communication: 94
+            },
+            skillCategories: [
+              {
+                name: 'Battery Testing & Validation',
+                percentage: 95,
+                description: 'Expert in comprehensive battery testing protocols and validation procedures'
+              },
+              {
+                name: 'High Voltage Systems',
+                percentage: 93,
+                description: 'Extensive experience with high-voltage safety protocols and system design'
+              },
+              {
+                name: 'Battery Management Systems (BMS)',
+                percentage: 91,
+                description: 'Deep knowledge of BMS architecture and implementation'
+              },
+              {
+                name: 'Data Analysis & Modeling',
+                percentage: 89,
+                description: 'Proficient in statistical analysis and predictive modeling for battery performance'
+              },
+              {
+                name: 'Safety Protocols & Compliance',
+                percentage: 97,
+                description: 'Outstanding track record in safety compliance and risk management'
+              },
+              {
+                name: 'Team Leadership',
+                percentage: 88,
+                description: 'Proven ability to lead technical teams and mentor junior engineers'
+              },
+              {
+                name: 'Project Management',
+                percentage: 85,
+                description: 'Experience managing complex battery development projects'
+              }
+            ]
+          };
+          
+          setCandidate(ahmedData);
+        } else {
+          // For other candidates, show basic placeholder
+          setCandidate({
+            id: candidateId || 'unknown',
+            name: 'Candidate Profile',
+            avatar: 'CP',
+            role: 'Engineer',
+            company: 'Not specified',
+            location: 'Not specified',
+            experience: 'Experience details will be available soon',
+            education: 'Education details will be available soon',
+            email: 'email@example.com',
+            colareScore: 0,
+            ranking: 'Assessment pending',
+            skills: {
+              technical: 0,
+              problemSolving: 0,
+              communication: 0
+            },
+            skillCategories: []
+          });
+        }
         
-        // Transform the API data to match the existing UI structure
-        const transformedCandidate: Candidate = {
-          id: data.candidate.id,
-          name: data.candidate.name,
-          avatar: data.candidate.name.split(' ').map(n => n[0]).join(''),
-          role: data.candidate.currentPosition || 'Not specified',
-          company: 'Not specified', // This could be enhanced later
-          location: 'Not specified', // This could be enhanced later
-          experience: data.candidate.currentPosition || 'Not specified',
-          education: data.candidate.education || 'Not specified',
-          email: data.candidate.email || 'Not specified',
-          colareScore: data.assessment?.colareScore || 0,
-          ranking: data.assessment ? 'Assessment completed' : 'No assessment completed',
-          skills: {
-            technical: data.assessment?.coreScores.technical || 0,
-            problemSolving: data.assessment?.coreScores.problemSolving || 0,
-            communication: data.assessment?.coreScores.communication || 0
-          },
-          skillCategories: data.assessment?.fieldSkills
-            .filter(skill => !skill.name.toLowerCase().includes('signal processing'))
-            .map(skill => ({
-              name: skill.name,
-              percentage: skill.score,
-              description: `Score in ${skill.name.toLowerCase()}`
-            })) || []
-        };
-        
-        setCandidate(transformedCandidate);
       } catch (err: any) {
-        console.error('Error fetching candidate data:', err);
-        setError(err.response?.data?.message || 'Failed to load candidate data');
+        console.error('Error loading candidate data:', err);
+        setError('Failed to load candidate data');
       } finally {
         setLoading(false);
       }
