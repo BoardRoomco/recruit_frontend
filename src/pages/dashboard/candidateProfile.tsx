@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { candidateAPI } from '../../services/api';
 import ResumeModal from '../../components/ResumeModal';
 import { getResumeUrl } from '../../data/resumes';
+import { ChatCircle, PaperPlaneTilt, Calendar, Star } from '@phosphor-icons/react';
 
 interface CandidateData {
   id: string;
@@ -69,6 +70,31 @@ const CandidateProfile: React.FC = () => {
     candidateName: '',
     resumeUrl: ''
   });
+
+  // Comments state
+  const [comments, setComments] = useState<string[]>([
+    "Strong technical background in mechanical engineering",
+    "Excellent communication skills during phone screening"
+  ]);
+  const [newComment, setNewComment] = useState<string>('');
+  const [isAddingComment, setIsAddingComment] = useState<boolean>(false);
+
+  // Handle adding a new comment
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      setComments([...comments, newComment.trim()]);
+      setNewComment('');
+      setIsAddingComment(false);
+    }
+  };
+
+  // Handle key press in comment input
+  const handleCommentKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAddComment();
+    }
+  };
 
   useEffect(() => {
     const fetchCandidate = async () => {
@@ -274,7 +300,7 @@ const CandidateProfile: React.FC = () => {
                       candidateName: candidate.name,
                       resumeUrl: getResumeUrl(candidate.name)!
                     })}
-                    className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center font-['DM_Sans']"
+                    className="w-full bg-graphite text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center font-dmsans"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -283,6 +309,24 @@ const CandidateProfile: React.FC = () => {
                     View Resume
                   </button>
                 )}
+                
+                {/* Invite to Interview Button */}
+                <button 
+                  onClick={() => alert(`Interview invitation sent to ${candidate.name}`)}
+                  className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 flex items-center justify-center font-dmsans"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Invite to Interview
+                </button>
+                
+                {/* Shortlist Button */}
+                <button 
+                  onClick={() => alert(`${candidate.name} has been shortlisted`)}
+                  className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors duration-200 flex items-center justify-center font-dmsans"
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                  Shortlist Candidate
+                </button>
               </div>
 
               {/* Colare Score Section */}
@@ -304,6 +348,79 @@ const CandidateProfile: React.FC = () => {
                   ></div>
                 </div>
               </div>
+
+
+            </div>
+
+            {/* Comments Section - Separate Box */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 mt-6">
+              <div className="flex items-center gap-2 mb-6">
+                <ChatCircle size={18} className="text-gray-500" />
+                <h3 className="text-lg font-semibold text-gray-900 font-fustat">Comments & Notes</h3>
+              </div>
+              
+              {/* Existing Comments */}
+              <div className="space-y-3 mb-6">
+                {comments.length > 0 ? (
+                  comments.map((comment, index) => (
+                    <div key={index} className="bg-gray-50 rounded-lg p-4 border-l-2 border-gray-300">
+                      <div className="flex items-start justify-between">
+                        <p className="text-gray-700 font-dmsans text-sm flex-1 leading-relaxed">{comment}</p>
+                        <span className="text-xs text-gray-400 font-dmsans ml-4 whitespace-nowrap">
+                          {new Date().toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <ChatCircle size={32} className="text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-500 font-dmsans text-sm">No comments yet.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Add Comment Section */}
+              {isAddingComment ? (
+                <div className="space-y-3">
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyPress={handleCommentKeyPress}
+                    placeholder="Add a note about this candidate..."
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 resize-none font-dmsans text-sm"
+                    rows={3}
+                    autoFocus
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      onClick={() => {
+                        setIsAddingComment(false);
+                        setNewComment('');
+                      }}
+                      className="px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-dmsans"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddComment}
+                      disabled={!newComment.trim()}
+                      className="px-3 py-2 text-sm font-medium text-white bg-gray-700 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-dmsans"
+                    >
+                      <PaperPlaneTilt size={14} />
+                      Add
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAddingComment(true)}
+                  className="w-full p-3 border border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-dmsans text-sm"
+                >
+                  <ChatCircle size={16} />
+                  Add a comment or note
+                </button>
+              )}
             </div>
           </div>
 
@@ -385,6 +502,8 @@ const CandidateProfile: React.FC = () => {
                 </div>
               )}
             </div>
+
+
           </div>
         </div>
       </div>

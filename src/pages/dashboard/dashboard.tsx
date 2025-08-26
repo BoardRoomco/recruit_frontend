@@ -101,7 +101,7 @@ const Dashboard: React.FC = () => {
         const fakeJobs: Job[] = [
           {
             id: '1',
-            title: 'Sr. Battery Test Technician III',
+            title: 'Staff Mechanical Design Engineer',
             description: 'Lead battery testing and validation for electric vehicle systems',
             status: 'active',
             createdAt: '2024-01-15T10:00:00Z',
@@ -344,7 +344,7 @@ const Dashboard: React.FC = () => {
                     <div className="ml-3 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-600">Total Candidates</dt>
-                        <dd className="text-2xl font-semibold text-gray-900">{applications.length}</dd>
+                        <dd className="text-2xl font-semibold text-gray-900">561</dd>
                       </dl>
                     </div>
                   </div>
@@ -385,39 +385,39 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center">
                     <div className="w-24 text-sm font-medium text-gray-700">Applied</div>
                     <div className="flex-1 bg-gradient-to-r from-violet to-violet/80 rounded-lg h-8 flex items-center justify-end pr-4">
-                      <span className="text-white font-semibold text-sm">{applications.length}</span>
+                      <span className="text-white font-semibold text-sm">561</span>
                     </div>
                   </div>
                   
                   {/* Assessed */}
                   <div className="flex items-center">
                     <div className="w-24 text-sm font-medium text-gray-700">Assessed</div>
-                    <div className="flex-1 bg-gradient-to-r from-violet/80 to-violet/60 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'reviewed').length / applications.length) * 100)}%` }}>
-                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'reviewed').length}</span>
+                    <div className="flex-1 bg-gradient-to-r from-violet/80 to-violet/60 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: '68%' }}>
+                      <span className="text-white font-semibold text-sm">382</span>
                     </div>
                   </div>
                   
                   {/* Interviewed */}
                   <div className="flex items-center">
                     <div className="w-24 text-sm font-medium text-gray-700">Interviewed</div>
-                    <div className="flex-1 bg-gradient-to-r from-violet/60 to-violet/40 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'interviewed').length / applications.length) * 100)}%` }}>
-                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'interviewed').length}</span>
+                    <div className="flex-1 bg-gradient-to-r from-violet/60 to-violet/40 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: '32%' }}>
+                      <span className="text-white font-semibold text-sm">179</span>
                     </div>
                   </div>
                   
                   {/* Offered */}
                   <div className="flex items-center">
                     <div className="w-24 text-sm font-medium text-gray-700">Offered</div>
-                    <div className="flex-1 bg-gradient-to-r from-violet/40 to-violet/20 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'offered').length / applications.length) * 100)}%` }}>
-                      <span className="text-white font-semibold text-sm">{applications.filter(app => app.status === 'offered').length}</span>
+                    <div className="flex-1 bg-gradient-to-r from-violet/40 to-violet/20 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: '14%' }}>
+                      <span className="text-white font-semibold text-sm">78</span>
                     </div>
                   </div>
                   
                   {/* Hired */}
                   <div className="flex items-center">
                     <div className="w-24 text-sm font-medium text-gray-700">Hired</div>
-                    <div className="flex-1 bg-gradient-to-r from-violet/20 to-violet/10 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: `${Math.min(100, (applications.filter(app => app.status === 'hired').length / applications.length) * 100)}%` }}>
-                      <span className="text-violet font-semibold text-sm">{applications.filter(app => app.status === 'hired').length}</span>
+                    <div className="flex-1 bg-gradient-to-r from-violet/20 to-violet/10 rounded-lg h-8 flex items-center justify-end pr-4" style={{ width: '8%' }}>
+                      <span className="text-violet font-semibold text-sm">45</span>
                     </div>
                   </div>
                 </div>

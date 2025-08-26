@@ -35,42 +35,201 @@ const Candidates: React.FC = () => {
     const fetchCandidates = async () => {
       try {
         setLoading(true);
-        console.log('Fetching candidates for company:', user?.company?.id);
-        const applications: Application[] = await applicationsAPI.getCompanyApplications();
-        console.log('Applications data received:', applications);
         
-        // Transform Application[] to Candidate[]
-        const transformedCandidates: Candidate[] = applications.map(app => ({
-          id: app.candidateId,
-          firstName: app.candidate?.firstName || 'Unknown',
-          lastName: app.candidate?.lastName || 'Unknown',
-          email: 'email@example.com', // Application doesn't have email, using placeholder
-          status: app.status,
-          createdAt: app.createdAt,
-          job: app.job ? {
-            id: app.job.id,
-            title: app.job.title
-          } : undefined
-        }));
+        // Fake candidate data for demo
+        const fakeCandidates: Candidate[] = [
+          {
+            id: '1',
+            firstName: 'Ahmed',
+            lastName: 'Osman',
+            email: 'ahmed.osman@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-20T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          },
+          {
+            id: '2',
+            firstName: 'Sarah',
+            lastName: 'Chen',
+            email: 'sarah.chen@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-19T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          },
+          {
+            id: '3',
+            firstName: 'Marcus',
+            lastName: 'Rodriguez',
+            email: 'marcus.rodriguez@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-18T10:00:00Z',
+            job: { id: '2', title: 'Sr. Mechanical Engineer, Mechanisms' }
+          },
+          {
+            id: '4',
+            firstName: 'Jennifer',
+            lastName: 'Liu',
+            email: 'jennifer.liu@email.com',
+            status: 'interviewed',
+            createdAt: '2024-01-17T10:00:00Z',
+            job: { id: '3', title: 'Validation Engineer, Chassis' }
+          },
+          {
+            id: '5',
+            firstName: 'David',
+            lastName: 'Park',
+            email: 'david.park@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-16T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          },
+          {
+            id: '6',
+            firstName: 'Maria',
+            lastName: 'Garcia',
+            email: 'maria.garcia@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-15T10:00:00Z',
+            job: { id: '4', title: 'Controls Test Engineer' }
+          },
+          {
+            id: '7',
+            firstName: 'James',
+            lastName: 'Wilson',
+            email: 'james.wilson@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-14T10:00:00Z',
+            job: { id: '5', title: 'Electronics Design Industrialization Manager' }
+          },
+          {
+            id: '8',
+            firstName: 'Priya',
+            lastName: 'Patel',
+            email: 'priya.patel@email.com',
+            status: 'interviewed',
+            createdAt: '2024-01-13T10:00:00Z',
+            job: { id: '2', title: 'Sr. Mechanical Engineer, Mechanisms' }
+          },
+          {
+            id: '9',
+            firstName: 'Robert',
+            lastName: 'Kim',
+            email: 'robert.kim@email.com',
+            status: 'rejected',
+            createdAt: '2024-01-12T10:00:00Z',
+            job: { id: '3', title: 'Validation Engineer, Chassis' }
+          },
+          {
+            id: '10',
+            firstName: 'Emily',
+            lastName: 'Zhang',
+            email: 'emily.zhang@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-11T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          },
+          {
+            id: '11',
+            firstName: 'Michael',
+            lastName: 'Brown',
+            email: 'michael.brown@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-10T10:00:00Z',
+            job: { id: '4', title: 'Controls Test Engineer' }
+          },
+          {
+            id: '12',
+            firstName: 'Lisa',
+            lastName: 'Thompson',
+            email: 'lisa.thompson@email.com',
+            status: 'interviewed',
+            createdAt: '2024-01-09T10:00:00Z',
+            job: { id: '5', title: 'Electronics Design Industrialization Manager' }
+          },
+          {
+            id: '13',
+            firstName: 'Kevin',
+            lastName: 'Lee',
+            email: 'kevin.lee@email.com',
+            status: 'rejected',
+            createdAt: '2024-01-08T10:00:00Z',
+            job: { id: '2', title: 'Sr. Mechanical Engineer, Mechanisms' }
+          },
+          {
+            id: '14',
+            firstName: 'Anna',
+            lastName: 'Petrov',
+            email: 'anna.petrov@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-07T10:00:00Z',
+            job: { id: '3', title: 'Validation Engineer, Chassis' }
+          },
+          {
+            id: '15',
+            firstName: 'Daniel',
+            lastName: 'Martinez',
+            email: 'daniel.martinez@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-06T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          },
+          {
+            id: '16',
+            firstName: 'Rachel',
+            lastName: 'Johnson',
+            email: 'rachel.johnson@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-05T10:00:00Z',
+            job: { id: '4', title: 'Controls Test Engineer' }
+          },
+          {
+            id: '17',
+            firstName: 'Alex',
+            lastName: 'Chen',
+            email: 'alex.chen@email.com',
+            status: 'submitted',
+            createdAt: '2024-01-04T10:00:00Z',
+            job: { id: '5', title: 'Electronics Design Industrialization Manager' }
+          },
+          {
+            id: '18',
+            firstName: 'Samantha',
+            lastName: 'Taylor',
+            email: 'samantha.taylor@email.com',
+            status: 'interviewed',
+            createdAt: '2024-01-03T10:00:00Z',
+            job: { id: '2', title: 'Sr. Mechanical Engineer, Mechanisms' }
+          },
+          {
+            id: '19',
+            firstName: 'Ryan',
+            lastName: 'Murphy',
+            email: 'ryan.murphy@email.com',
+            status: 'rejected',
+            createdAt: '2024-01-02T10:00:00Z',
+            job: { id: '3', title: 'Validation Engineer, Chassis' }
+          },
+          {
+            id: '20',
+            firstName: 'Grace',
+            lastName: 'Wong',
+            email: 'grace.wong@email.com',
+            status: 'reviewed',
+            createdAt: '2024-01-01T10:00:00Z',
+            job: { id: '1', title: 'Staff Mechanical Design Engineer' }
+          }
+        ];
         
-        console.log('Transformed candidates:', transformedCandidates);
-        setCandidates(transformedCandidates);
+        setCandidates(fakeCandidates);
       } catch (err: any) {
         console.error('Failed to load candidates:', err);
-        console.error('Error details:', err.response?.data || err.message);
-        // Set empty array on error to prevent crashes
         setCandidates([]);
       } finally {
         setLoading(false);
       }
     };
 
-    if (user?.company?.id) {
-      fetchCandidates();
-    } else {
-      console.log('No company ID found, user:', user);
-      setLoading(false);
-    }
+    fetchCandidates();
   }, [user?.company?.id]);
 
   if (loading) {
@@ -121,83 +280,119 @@ const Candidates: React.FC = () => {
           </div>
         </div>
 
-        {/* Candidates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {candidates && candidates.length > 0 ? (
-            candidates
-              .filter(candidate => 
-                candidate.firstName.toLowerCase().includes(search.toLowerCase()) ||
-                candidate.lastName.toLowerCase().includes(search.toLowerCase()) ||
-                candidate.email.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((candidate) => (
-                <div
-                  key={candidate.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition cursor-pointer"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-softLavender rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-violet">
-                          {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
-                        </span>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-fustat font-bold text-graphite">
-                          {candidate.firstName} {candidate.lastName}
-                        </h3>
-                        <p className="text-xs text-gray-500 font-dmsans">{candidate.email}</p>
-                      </div>
-                    </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium font-dmsans ${
-                      candidate.status === 'submitted' ? 'bg-yellow-50 text-yellow-700' :
-                      candidate.status === 'reviewed' ? 'bg-blue-50 text-blue-700' :
-                      'bg-gray-50 text-gray-700'
-                    }`}>
-                      {candidate.status}
-                    </span>
-                  </div>
-                  
-                  {candidate.job && (
-                    <div className="mb-3">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
-                        <Briefcase size={14} className="text-gray-400" />
-                        {candidate.job.title}
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-gray-500 font-dmsans">
-                      <Calendar size={14} className="text-gray-400" />
-                      {new Date(candidate.createdAt).toLocaleDateString()}
-                    </div>
-                    <Link
-                      to={`/dashboard/jobs/${candidate.job?.id || 'unknown'}/candidates/${candidate.id}`}
-                      className="flex items-center gap-1 text-xs text-violet hover:text-corePurple font-dmsans font-medium transition"
-                    >
-                      <Eye size={14} />
-                      View Profile
-                    </Link>
-                  </div>
-                </div>
-              ))
-          ) : (
-            <div className="col-span-full text-center text-graphite font-dmsans text-sm py-8">
-              {loading ? 'Loading candidates...' : 'No candidates found.'}
-            </div>
-          )}
-          
-          {candidates && candidates.length > 0 && candidates.filter(candidate => 
-            candidate.firstName.toLowerCase().includes(search.toLowerCase()) ||
-            candidate.lastName.toLowerCase().includes(search.toLowerCase()) ||
-            candidate.email.toLowerCase().includes(search.toLowerCase())
-          ).length === 0 && (
-            <div className="col-span-full text-center text-graphite font-dmsans text-sm py-8">
-              No candidates found matching your search.
-            </div>
-          )}
+        {/* Candidates Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">
+                    Candidate
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">
+                    Position Applied
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">
+                    Applied Date
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {candidates && candidates.length > 0 ? (
+                  candidates
+                    .filter(candidate => 
+                      candidate.firstName.toLowerCase().includes(search.toLowerCase()) ||
+                      candidate.lastName.toLowerCase().includes(search.toLowerCase()) ||
+                      candidate.email.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .map((candidate) => (
+                      <tr key={candidate.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-softLavender rounded-full flex items-center justify-center">
+                              <span className="text-sm font-semibold text-violet">
+                                {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-fustat font-bold text-graphite">
+                                {candidate.firstName} {candidate.lastName}
+                              </div>
+                              <div className="text-sm text-gray-500 font-dmsans">{candidate.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-graphite font-dmsans">
+                            {candidate.job?.title || 'N/A'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium font-dmsans ${
+                            candidate.status === 'submitted' ? 'bg-yellow-100 text-yellow-800' :
+                            candidate.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
+                            candidate.status === 'interviewed' ? 'bg-green-100 text-green-800' :
+                            candidate.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {candidate.status.charAt(0).toUpperCase() + candidate.status.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-dmsans">
+                          {new Date(candidate.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex items-center space-x-3">
+                            <Link
+                              to={`/dashboard/jobs/${candidate.job?.id || 'unknown'}/candidates/${candidate.id}`}
+                              className="text-violet hover:text-corePurple transition-colors"
+                              title="View Profile"
+                            >
+                              <Eye size={18} />
+                            </Link>
+                            <button
+                              onClick={() => alert(`Schedule interview with ${candidate.firstName} ${candidate.lastName}`)}
+                              className="text-gray-400 hover:text-gray-600 transition-colors"
+                              title="Schedule Interview"
+                            >
+                              <Calendar size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-graphite font-dmsans text-sm">
+                      {loading ? 'Loading candidates...' : 'No candidates found.'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+        
+        {/* Results Count */}
+        {candidates && candidates.length > 0 && (
+          <div className="mt-4 text-sm text-gray-500 font-dmsans">
+            Showing {candidates.filter(candidate => 
+              candidate.firstName.toLowerCase().includes(search.toLowerCase()) ||
+              candidate.lastName.toLowerCase().includes(search.toLowerCase()) ||
+              candidate.email.toLowerCase().includes(search.toLowerCase())
+            ).length} of {candidates.length} candidates
+          </div>
+        )}
 
         {/* Filter Modal */}
         {filterOpen && (

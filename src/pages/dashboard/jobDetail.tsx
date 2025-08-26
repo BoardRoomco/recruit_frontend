@@ -40,12 +40,12 @@ const JobDetail: React.FC = () => {
       try {
         setLoading(true);
         
-        // Hardcoded job data for Sr. Battery Test Technician III
+        // Hardcoded job data for Staff Mechanical Design Engineer
         if (id === '1') {
           const fakeJob: Job = {
             id: '1',
-            title: 'Sr. Battery Test Technician III',
-            description: 'Lead battery testing and validation for electric vehicle systems. Work with cutting-edge battery technology and ensure quality standards for Rivian\'s electric vehicles.',
+            title: 'Staff Mechanical Design Engineer',
+            description: 'Lead mechanical design and development for electric vehicle systems. Work with cutting-edge mechanical engineering and ensure design excellence for Rivian\'s electric vehicles.',
             requirements: 'Bachelor\'s degree in Electrical Engineering, Mechanical Engineering, or related field. 5+ years of experience in battery testing and validation. Experience with high-voltage systems and safety protocols.',
             assessmentLink: '/assessment/battery-test',
             assessmentField: 'electrical',
@@ -281,14 +281,14 @@ const JobDetail: React.FC = () => {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-700">
-                  Closed
-                </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-50 text-green-700">
+                Active
+              </span>
               <div className="flex items-center text-gray-500">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span className="text-sm">{filteredCandidates.filter(c => c.colareScore > 0).length}/{filteredCandidates.length} candidates assessed</span>
+                <span className="text-sm">45/67 candidates assessed</span>
               </div>
             </div>
             

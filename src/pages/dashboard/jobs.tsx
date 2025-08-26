@@ -36,7 +36,7 @@ const Jobs: React.FC = () => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [view, setView] = useState<'card' | 'table'>('card');
+  const [view, setView] = useState<'card' | 'table'>('table');
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -47,8 +47,8 @@ const Jobs: React.FC = () => {
         const fakeJobs: Job[] = [
           {
             id: '1',
-            title: 'Sr. Battery Test Technician III',
-            description: 'Lead battery testing and validation for electric vehicle systems',
+            title: 'Staff Mechanical Design Engineer',
+            description: 'Lead mechanical design and development for electric vehicle systems',
             status: 'active',
             createdAt: '2024-01-15T10:00:00Z',
             _count: { applications: 260 }
@@ -333,20 +333,20 @@ const Jobs: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100">
-                  <thead className="bg-gray-50">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Job Details</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Candidates</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Created</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Last Updated</th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Job Details</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Status</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Candidates</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Created</th>
+                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Last Updated</th>
+                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider font-dmsans">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-100">
+                  <tbody className="bg-white divide-y divide-gray-200">
                     {jobs.filter(job => {
                       const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
                       const matchesStatus = filterStatus === 'all' || 
@@ -354,32 +354,47 @@ const Jobs: React.FC = () => {
                         (filterStatus === 'inactive' && job.status !== 'active');
                       return matchesSearch && matchesStatus;
                     }).map(job => (
-                      <tr key={job.id} className="hover:bg-gray-50 transition cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
-                        <td className="px-6 py-4">
+                      <tr key={job.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => navigate(`/dashboard/jobs/${job.id}`)}>
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900 mb-1">{job.title}</div>
-                            <div className="text-xs text-gray-500">Hardware Engineering • San Francisco, CA</div>
+                            <div className="text-sm font-fustat font-bold text-graphite mb-1">{job.title}</div>
+                            <div className="text-sm text-gray-500 font-dmsans">
+                              {job.id === '1' ? 'Tustin, California US • Mechanical & Electrical Engineering' :
+                               job.id === '2' ? 'Irvine, California US • Mechanical & Electrical Engineering' :
+                               job.id === '3' ? 'Irvine, California US • Mechanical & Electrical Engineering' :
+                               job.id === '4' ? 'Palo Alto, California US • Mechanical & Electrical Engineering' :
+                               job.id === '5' ? 'Torrance, California US • Mechanical & Electrical Engineering' : 
+                               'California, US • Mechanical & Electrical Engineering'}
+                            </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium font-dmsans ${
                             job.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                           }`}>
                             {job.status === 'active' ? 'Active' : 'Draft'}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
                             <User size={16} className="text-gray-400" />
-                            <span className="text-sm text-gray-900">{job._count?.applications || 0}</span>
-                            <span className="text-xs text-gray-500">candidates</span>
+                            <span className="text-sm text-graphite font-dmsans">{job._count?.applications || 0}</span>
+                            <span className="text-xs text-gray-500 font-dmsans">candidates</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {new Date(job.createdAt).toLocaleDateString()}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-dmsans">
+                          {new Date(job.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {new Date(job.updatedAt || job.createdAt).toLocaleDateString()}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-dmsans">
+                          {new Date(job.updatedAt || job.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="relative">

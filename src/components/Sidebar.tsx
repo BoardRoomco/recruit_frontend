@@ -46,14 +46,14 @@ const Sidebar: React.FC = () => {
       name: "Jobs",
       href: "/dashboard/jobs",
       icon: Briefcase,
-      badge: "1",
+      badge: null,
       allowedRoles: ["employer"]
     },
     {
       name: "Candidates",
       href: "/dashboard/candidates",
       icon: Users,
-      badge: "12",
+      badge: null,
       allowedRoles: ["employer"]
     },
     {
