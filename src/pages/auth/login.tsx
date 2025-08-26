@@ -78,12 +78,33 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-violet to-corePurple hover:from-corePurple hover:to-violet focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet font-dmsans transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+              disabled={isSubmitting}
+              className="group relative w-full flex justify-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-violet to-corePurple hover:from-corePurple hover:to-violet focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet font-dmsans transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              Sign In
+              {isSubmitting ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+              <p className="text-red-700 font-dmsans text-sm">{error}</p>
+            </div>
+          )}
         </form>
+
+        {/* Sign Up Section */}
+        <div className="mt-6 text-center">
+          <p className="text-graphite font-dmsans">
+            Don't have an account?{' '}
+            <Link
+              to="/register"
+              className="font-semibold text-violet hover:text-corePurple transition-colors duration-200"
+            >
+              Sign up here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

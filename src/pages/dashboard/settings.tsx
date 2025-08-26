@@ -1,9 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Gear, Building, User, Shield, Bell } from '@phosphor-icons/react';
+import { Gear, Building, User, Shield, Bell, Camera } from '@phosphor-icons/react';
+import { profileAPI } from '../../services/api';
+import RivianCarImage from '../../assets/rivian car.jpg';
 
 const Settings: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploadingLogo(true);
+      const result = await profileAPI.uploadCompanyLogo(file);
+      
+      // Update user context with new logo
+      if (user?.company) {
+        updateUser({
+          ...user,
+          company: {
+            ...user.company,
+            logo: result.logo
+          }
+        });
+      }
+      
+      setSuccessMessage('Company logo updated successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to upload company logo');
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -13,6 +57,52 @@ const Settings: React.FC = () => {
           <h1 className="text-4xl font-fustat font-bold text-graphite mb-2">Settings</h1>
           <p className="text-graphite font-dmsans text-lg">Manage your account and company preferences</p>
         </div>
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
+            <span className="text-green-700 font-dmsans">{successMessage}</span>
+          </div>
+        )}
+
+        {/* Company Logo Section */}
+        {user?.role === 'employer' && (
+          <div className="mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h3 className="text-lg font-fustat font-bold text-graphite mb-4">Company Logo</h3>
+            <div className="flex items-center space-x-6">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+                  <img 
+                    src={user?.company?.logo || RivianCarImage} 
+                    alt="Company Logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <label className="absolute bottom-0 right-0 w-6 h-6 bg-violet rounded-full flex items-center justify-center cursor-pointer hover:bg-corePurple transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    disabled={uploadingLogo}
+                  />
+                  <Camera className="h-3 w-3 text-white" weight="bold" />
+                </label>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-2">
+                  Upload your company logo. The image will be resized automatically.
+                </p>
+                <p className="text-xs text-gray-500">
+                  Supported formats: JPG, PNG, GIF. Max size: 5MB
+                </p>
+                {uploadingLogo && (
+                  <p className="text-xs text-violet mt-2">Uploading...</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Settings Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

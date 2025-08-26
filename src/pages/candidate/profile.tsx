@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { candidateAPI, profileAPI } from '../../services/api';
+import RivianCarImage from '../../assets/rivian car.jpg';
+import { Camera, Upload } from '@phosphor-icons/react';
 
 interface AssessmentScore {
   id: string;
@@ -29,6 +31,7 @@ const CandidateProfile: React.FC = () => {
   });
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [uploadingPicture, setUploadingPicture] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -128,6 +131,41 @@ const CandidateProfile: React.FC = () => {
     }));
   };
 
+  const handleProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploadingPicture(true);
+      const result = await profileAPI.uploadProfilePicture(file);
+      
+      // Update profile with new picture URL
+      setProfile(prev => ({
+        ...prev,
+        profilePicture: result.profilePicture
+      }));
+      
+      setSuccessMessage('Profile picture updated successfully!');
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to upload profile picture');
+    } finally {
+      setUploadingPicture(false);
+    }
+  };
+
   const formatScore = (score: number | null) => {
     if (score === null) return 'N/A';
     return `${(score * 100).toFixed(1)}%`;
@@ -176,6 +214,43 @@ const CandidateProfile: React.FC = () => {
           {successMessage}
         </div>
       )}
+
+      {/* Profile Picture Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Profile Picture</h2>
+        <div className="flex items-center space-x-6">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+              <img 
+                src={profile?.profilePicture || RivianCarImage} 
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <label className="absolute bottom-0 right-0 w-8 h-8 bg-violet rounded-full flex items-center justify-center cursor-pointer hover:bg-corePurple transition-colors">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureUpload}
+                className="hidden"
+                disabled={uploadingPicture}
+              />
+              <Camera className="h-4 w-4 text-white" weight="bold" />
+            </label>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Upload a new profile picture. The image will be resized automatically.
+            </p>
+            <p className="text-xs text-gray-500">
+              Supported formats: JPG, PNG, GIF. Max size: 5MB
+            </p>
+            {uploadingPicture && (
+              <p className="text-xs text-violet mt-2">Uploading...</p>
+            )}
+          </div>
+        </div>
+      </div>
       
       {/* Basic Profile Information */}
       <div className="mb-8">

@@ -46,14 +46,17 @@ export interface User {
   id: string;
   email: string;
   role: "candidate" | "employer";
+  profilePicture?: string;
   candidate?: {
     id: string;
     firstName: string;
     lastName: string;
+    profilePicture?: string;
   };
   company?: {
     id: string;
     name: string;
+    logo?: string;
   };
 }
 
@@ -388,6 +391,16 @@ export const profileAPI = {
     return response.data.data.candidate;
   },
 
+  uploadProfilePicture: async (imageFile: File): Promise<any> => {
+    const formData = new FormData();
+    formData.append("profilePicture", imageFile);
+    
+    const response = await api.post("/candidates/profile/picture", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.data;
+  },
+
   getCompanyProfile: async (): Promise<any> => {
     const response = await api.get("/companies/profile");
     return response.data.data.company;
@@ -400,6 +413,16 @@ export const profileAPI = {
   }): Promise<any> => {
     const response = await api.put("/companies/profile", profileData);
     return response.data.data.company;
+  },
+
+  uploadCompanyLogo: async (imageFile: File): Promise<any> => {
+    const formData = new FormData();
+    formData.append("companyLogo", imageFile);
+    
+    const response = await api.post("/companies/profile/logo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data.data;
   },
 };
 

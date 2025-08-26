@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useSidebar } from "../context/SidebarContext";
 import TitleLogo from "../assets/titlelogo.svg";
+import RivianCarImage from "../assets/rivian car.jpg";
 import { 
   SquaresFour, 
   Briefcase, 
@@ -91,15 +92,19 @@ const Sidebar: React.FC = () => {
       {/* User Profile Section */}
       <div className="p-6">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-            {user?.company?.name ? (
-              <span className="text-sm font-semibold text-gray-600">
-                {user.company.name.charAt(0).toUpperCase()}
-              </span>
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+            {(user?.candidate?.profilePicture || user?.company?.logo || user?.profilePicture) ? (
+              <img 
+                src={user?.candidate?.profilePicture || user?.company?.logo || user?.profilePicture || RivianCarImage} 
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <span className="text-sm font-semibold text-gray-600">
-                {user?.email?.charAt(0).toUpperCase()}
-              </span>
+              <img 
+                src={RivianCarImage} 
+                alt="Default Profile"
+                className="w-full h-full object-cover"
+              />
             )}
           </div>
           {!isCollapsed && (
