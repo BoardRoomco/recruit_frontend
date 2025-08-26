@@ -39,8 +39,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-white to-softLavender flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center">
-          <img src="/waterloologo.png" alt="Waterloo Logo" className="h-16 w-auto mb-6" />
-          <h2 className="mt-2 text-center text-3xl font-fustat font-bold text-graphite">Sign In</h2>
+          <h2 className="text-center text-3xl font-fustat font-bold text-graphite">Sign In</h2>
         </div>
         <form className="mt-8 space-y-6 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-10" onSubmit={handleSubmit}>
           <div className="space-y-4">

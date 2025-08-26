@@ -14,7 +14,7 @@ import {
 } from '@phosphor-icons/react';
 
 const Sidebar: React.FC = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -24,7 +24,13 @@ const Sidebar: React.FC = () => {
     navigate("/login");
   };
 
-  if (!isAuthenticated) {
+  // Don't show sidebar if not authenticated, still loading, or on public routes
+  const publicRoutes = ['/', '/login', '/register'];
+  const isPublicJobsRoute = location.pathname === '/jobs' || 
+                           (location.pathname.startsWith('/jobs/') && !location.pathname.includes('/dashboard'));
+  const isPublicRoute = publicRoutes.includes(location.pathname) || isPublicJobsRoute;
+  
+  if (!isAuthenticated || isLoading || isPublicRoute) {
     return null;
   }
 

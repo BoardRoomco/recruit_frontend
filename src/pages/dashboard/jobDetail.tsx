@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { jobsAPI } from '../../services/api';
 import { Job, AssessmentScore } from '../../types/assessment';
+import { Eye, Calendar } from '@phosphor-icons/react';
 
 interface Candidate {
   id: string;
@@ -143,6 +144,11 @@ const JobDetail: React.FC = () => {
       return matchesSearch;
     })
     .sort((a, b) => b.colareScore - a.colareScore); // Sort by colare score in descending order
+
+  const handleScheduleInterview = (candidateId: string, candidateName: string) => {
+    // For demo purposes, show an alert. In real app, this would open a scheduling modal
+    alert(`Schedule interview with ${candidateName}\n\nIn a real application, this would open a calendar/scheduling interface.`);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -440,12 +446,22 @@ const JobDetail: React.FC = () => {
                       {candidate.time}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link 
-                        to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        View Profile
-                      </Link>
+                      <div className="flex items-center space-x-2">
+                        <Link 
+                          to={`/dashboard/jobs/${id}/candidates/${candidate.id}`}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 transition-colors"
+                          title="View Profile"
+                        >
+                          <Eye size={16} weight="regular" />
+                        </Link>
+                        <button
+                          onClick={() => handleScheduleInterview(candidate.id, candidate.name)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-50 hover:bg-green-100 text-green-600 hover:text-green-700 transition-colors"
+                          title="Schedule Interview"
+                        >
+                          <Calendar size={16} weight="regular" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

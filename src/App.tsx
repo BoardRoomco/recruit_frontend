@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { SidebarProvider, useSidebar } from "./context/SidebarContext";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
@@ -45,11 +44,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
 function App() {
   return (
     <AuthProvider>
-      <SidebarProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50">
-            <Sidebar />
-            <Routes>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Sidebar />
+          <Routes>
               {/* Public routes - no sidebar margin */}
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
@@ -57,14 +55,14 @@ function App() {
               <Route path="/jobs" element={<JobList />} />
               <Route path="/jobs/:id" element={<JobDetail />} />
 
-              {/* Protected routes for candidates - with dynamic sidebar margin */}
+              {/* Protected routes for candidates */}
               <Route 
                 path="/candidate/profile" 
                 element={
                   <ProtectedRoute allowedRoles={['candidate']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <CandidateProfile />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -72,9 +70,9 @@ function App() {
                 path="/candidate/applications" 
                 element={
                   <ProtectedRoute allowedRoles={['candidate']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <CandidateApps />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -84,9 +82,9 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <Dashboard />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -94,9 +92,9 @@ function App() {
                 path="/dashboard/jobs" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <Jobs />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -104,9 +102,9 @@ function App() {
                 path="/dashboard/candidates" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <Candidates />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -114,9 +112,9 @@ function App() {
                 path="/dashboard/settings" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <Settings />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -124,9 +122,9 @@ function App() {
                 path="/dashboard/create" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <CreateJob />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -134,9 +132,9 @@ function App() {
                 path="/dashboard/jobs/:id" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <JobApplicants />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -144,9 +142,9 @@ function App() {
                 path="/dashboard/jobs/:id/edit" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <EditJob />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -154,9 +152,9 @@ function App() {
                 path="/dashboard/jobs/:jobId/candidates/:candidateId" 
                 element={
                   <ProtectedRoute allowedRoles={['employer']}>
-                    <DynamicMargin>
+                    <div className="ml-0 lg:ml-64 transition-all duration-300">
                       <CandidateDetailProfile />
-                    </DynamicMargin>
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -166,20 +164,10 @@ function App() {
             </Routes>
           </div>
         </Router>
-      </SidebarProvider>
     </AuthProvider>
   );
 }
 
-// DynamicMargin component that adjusts based on sidebar state
-const DynamicMargin: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { sidebarWidth } = useSidebar();
-  
-  return (
-    <div className={`${sidebarWidth} transition-all duration-300`}>
-      {children}
-    </div>
-  );
-};
+
 
 export default App;
