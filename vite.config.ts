@@ -18,9 +18,13 @@ export default defineConfig({
     hmr: true,
     proxy: {
       '/api': {
-        target: 'https://api.colare.co',
+        //Use below target when connecting to the production server
+        //target: 'https://api.colare.co',
+
+        //Use below target when connecting to the local server
+        target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: true,
+        secure: false,
       }
     }
   },
