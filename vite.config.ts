@@ -16,16 +16,16 @@ export default defineConfig({
   server: {
     port: 5173,
     hmr: true,
-    proxy: {
-      '/api': {
-        //Use below target when connecting to the production server
-        //target: 'https://api.colare.co',
+          proxy: {
+        '/api': {
+          //Use below target when connecting to the production server
+          //target: 'https://api.colare.co',
 
-        //Use below target when connecting to the local server
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-        secure: false,
+          //Use below target when connecting to the local server
+          target: 'http://localhost:5001',
+          changeOrigin: true,
+          secure: false,
+        }
       }
-    }
   },
 })

@@ -4,6 +4,7 @@ import { jobsAPI } from '../../services/api';
 import { Job, AssessmentScore } from '../../types/assessment';
 
 interface Candidate {
+  applicationId: string;
   id: string;
   name: string;
   avatar: string;
@@ -92,6 +93,15 @@ const JobDetail: React.FC = () => {
         return 'Not Interested';
       default:
         return status;
+    }
+  };
+
+  const handleSendAssessment = async (applicationId: string) => {
+    try {
+      await jobsAPI.sendAssessmentEmail(applicationId);
+      alert('Assessment email sent successfully!');
+    } catch (err: any) {
+      alert('Failed to send assessment email');
     }
   };
 
@@ -415,6 +425,9 @@ const JobDetail: React.FC = () => {
                     Time
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Assessment
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -462,6 +475,14 @@ const JobDetail: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {candidate.time}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => handleSendAssessment(candidate.applicationId)}
+                        className="px-3 py-1 rounded-md text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Send Assessment
+                      </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Link 

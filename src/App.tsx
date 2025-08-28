@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navigation from "./components/Navigation";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
+import ReferralPage from "./pages/referral/referral";
 
 import Dashboard from "./pages/dashboard/dashboard";
 import CreateJob from "./pages/dashboard/create";
@@ -45,6 +46,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/referral" element={<ReferralPage />} />
 
             {/* Protected routes for employers */}
             <Route 
