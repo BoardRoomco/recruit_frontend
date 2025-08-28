@@ -310,7 +310,7 @@ export const jobsAPI = {
 
 
 
-  sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: string }> => {
+sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: string }> => {
     const response = await api.post(`/applications/${applicationId}/send-assessment`);
     return response.data.data;
   },
