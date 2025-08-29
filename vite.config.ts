@@ -19,10 +19,10 @@ export default defineConfig({
           proxy: {
         '/api': {
           //Use below target when connecting to the production server
-          //target: 'https://api.colare.co',
+          target: 'https://api.colare.co',
 
           //Use below target when connecting to the local server
-          target: 'http://localhost:5001',
+          //target: 'http://localhost:5001',
           changeOrigin: true,
           secure: false,
         }
