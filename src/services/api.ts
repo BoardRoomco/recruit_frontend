@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosResponse } from "axios";
 import { AssessmentScore } from "../types/assessment";
 
 // API Configuration
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://api.colare.co";
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
