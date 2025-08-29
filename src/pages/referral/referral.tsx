@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import TitleLogo from '../../assets/titlelogo.svg';
 
 // API configuration
-const API_BASE_URL = 'http://localhost:5001'; // Local development
-// const API_BASE_URL = 'https://api.colare.co'; // Production
+const API_BASE_URL = 'https://api.colare.co'; // Production
+// const API_BASE_URL = 'http://localhost:5001'; // Local development
 
 export default function ReferralPage() {
   const [name, setName] = useState('');
