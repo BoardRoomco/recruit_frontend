@@ -11,6 +11,8 @@ const api: AxiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+
+
 });
 
 // Request interceptor to add auth token
@@ -22,9 +24,13 @@ api.interceptors.request.use(
     }
     return config;
   },
+
+
   (error) => {
     return Promise.reject(error);
   },
+
+
 );
 
 // Response interceptor for error handling
@@ -39,6 +45,8 @@ api.interceptors.response.use(
     }
     return Promise.reject(error);
   },
+
+
 );
 
 // Types
@@ -136,6 +144,8 @@ export const authAPI = {
     return response.data;
   },
 
+
+
   register: async (
     email: string,
     password: string,
@@ -155,6 +165,8 @@ export const authAPI = {
     const response = await api.post("/auth/register", payload);
     return response.data;
   },
+
+
 
   // New resume upload and parsing endpoint (Step 1)
   uploadResumeAndParse: async (
@@ -190,6 +202,8 @@ export const authAPI = {
     return response.data;
   },
 
+
+
   // Registration confirmation endpoint (Step 2)
   confirmRegistration: async (
     sessionId: string,
@@ -200,6 +214,8 @@ export const authAPI = {
       currentPosition?: string;
       education?: string;
     },
+
+
   ): Promise<AuthResponse> => {
     const response = await api.post("/auth/register/confirm", {
       sessionId,
@@ -207,6 +223,8 @@ export const authAPI = {
     });
     return response.data;
   },
+
+
 
   // Get session data endpoint
   getSessionData: async (
@@ -230,6 +248,8 @@ export const authAPI = {
     const response = await api.get(`/auth/register/session/${sessionId}`);
     return response.data;
   },
+
+
 };
 
 // Jobs API
@@ -242,10 +262,14 @@ export const jobsAPI = {
     return response.data.data;
   },
 
+
+
   getById: async (id: string): Promise<Job> => {
     const response = await api.get(`/jobs/${id}`);
     return response.data.data.job;
   },
+
+
 
   create: async (jobData: {
     title: string;
@@ -257,23 +281,38 @@ export const jobsAPI = {
     return response.data.data;
   },
 
+
+
   update: async (id: string, jobData: Partial<Job>): Promise<{ job: Job }> => {
     const response = await api.put(`/jobs/${id}`, jobData);
     return response.data.data;
   },
 
+
+
   delete: async (id: string): Promise<void> => {
     await api.delete(`/jobs/${id}`);
   },
+
+
 
   getByCompany: async (companyId: string): Promise<Job[]> => {
     const response = await api.get(`/jobs/company/${companyId}`);
     return response.data.data.jobs;
   },
 
+
+
   getJobCandidates: async (jobId: string): Promise<Candidate[]> => {
     const response = await api.get(`/jobs/${jobId}/candidates`);
     return response.data.data.candidates;
+  },
+
+
+
+sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: string }> => {
+    const response = await api.post(`/applications/${applicationId}/send-assessment`);
+    return response.data.data;
   },
 
   getJobCandidatesWithScores: async (
@@ -286,6 +325,8 @@ export const jobsAPI = {
     const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
     return response.data.data;
   },
+
+
 
   // Enhanced function to get candidates with both assessment scores and profile data
   getJobCandidatesWithProfiles: async (
@@ -334,6 +375,21 @@ export const jobsAPI = {
       candidatesWithAssessments: candidatesData.candidatesWithAssessments,
     };
   },
+
+
+
+  // Upload candidate resume for a specific job
+  uploadCandidateResume: async (jobId: string, resumeFile: File): Promise<any> => {
+    const formData = new FormData();
+    formData.append('resumeFile', resumeFile);
+
+    const response = await api.post(`/jobs/${jobId}/upload-candidate-resume`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
+
 };
 
 // Applications API
@@ -346,15 +402,21 @@ export const applicationsAPI = {
     return response.data.data;
   },
 
+
+
   getMyApplications: async (): Promise<Application[]> => {
     const response = await api.get("/candidates/applications");
     return response.data.data.applications;
   },
 
+
+
   getCompanyApplications: async (): Promise<Application[]> => {
     const response = await api.get("/companies/applications");
     return response.data.data.applications;
   },
+
+
 
   updateStatus: async (
     applicationId: string,
@@ -367,9 +429,13 @@ export const applicationsAPI = {
     return response.data.data;
   },
 
+
+
   withdraw: async (applicationId: string): Promise<void> => {
     await api.delete(`/candidates/applications/${applicationId}`);
   },
+
+
 };
 
 // Profile API
@@ -378,6 +444,8 @@ export const profileAPI = {
     const response = await api.get("/candidates/profile");
     return response.data.data.candidate;
   },
+
+
 
   updateCandidateProfile: async (profileData: {
     firstName?: string;
@@ -388,10 +456,14 @@ export const profileAPI = {
     return response.data.data.candidate;
   },
 
+
+
   getCompanyProfile: async (): Promise<any> => {
     const response = await api.get("/companies/profile");
     return response.data.data.company;
   },
+
+
 
   updateCompanyProfile: async (profileData: {
     name?: string;
@@ -401,6 +473,8 @@ export const profileAPI = {
     const response = await api.put("/companies/profile", profileData);
     return response.data.data.company;
   },
+
+
 };
 
 // Dashboard API
@@ -410,10 +484,14 @@ export const dashboardAPI = {
     return response.data.data;
   },
 
+
+
   getCompanyAnalytics: async (): Promise<any> => {
     const response = await api.get("/companies/analytics");
     return response.data.data;
   },
+
+
 };
 
 export const candidateAPI = {
@@ -421,6 +499,8 @@ export const candidateAPI = {
     const response = await api.get("/candidates/profile");
     return response.data.data.candidate;
   },
+
+
 
   getAssessmentScores: async () => {
     const response = await api.get("/candidates/assessment-scores");
@@ -432,6 +512,8 @@ export const candidateAPI = {
     }));
     return { assessmentScores: scores };
   },
+
+
 
   getCandidateAssessment: async (
     candidateId: string,
@@ -468,6 +550,8 @@ export const candidateAPI = {
     );
     return response.data.data;
   },
+
+
 };
 
 export default api;

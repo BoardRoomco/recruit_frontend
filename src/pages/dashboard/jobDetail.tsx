@@ -4,12 +4,12 @@ import { jobsAPI } from '../../services/api';
 import { Job, AssessmentScore } from '../../types/assessment';
 
 interface Candidate {
+  applicationId: string;
   id: string;
   name: string;
   avatar: string;
   experience: string;
   education: string;
-  email: string;
   colareScore: number;
   skills: {
     technical: number;
@@ -45,9 +45,9 @@ const JobDetail: React.FC = () => {
         console.log('Job data received:', jobData);
         setJob(jobData);
         
-        // Fetch candidates with both assessment scores and profile data
-        console.log('Fetching candidates with profiles...');
-        const candidatesData = await jobsAPI.getJobCandidatesWithProfiles(id);
+        // Fetch candidates with assessment scores (more reliable than profiles)
+        console.log('Fetching candidates with scores...');
+        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
         console.log('Candidates data received:', candidatesData);
         setCandidates(candidatesData.candidates || []);
         
@@ -96,6 +96,15 @@ const JobDetail: React.FC = () => {
     }
   };
 
+  const handleSendAssessment = async (applicationId: string) => {
+    try {
+      await jobsAPI.sendAssessmentEmail(applicationId);
+      alert('Assessment email sent successfully!');
+    } catch (err: any) {
+      alert('Failed to send assessment email');
+    }
+  };
+
   // Add helper function to format skill names
   const formatSkillName = (name: string) => {
     return name
@@ -136,6 +145,82 @@ const JobDetail: React.FC = () => {
     if (score >= 70) return 'text-blue-600';
     if (score >= 50) return 'text-yellow-600';
     return 'text-red-600';
+  };
+
+  // Handle multiple resume uploads automatically
+  const handleMultipleResumeUpload = async (files: File[]) => {
+    if (!files.length || !id) return;
+    
+          try {
+        // Process files sequentially to avoid overwhelming the server
+        for (const file of files) {
+          const result = await jobsAPI.uploadCandidateResume(id, file);
+          
+          // Small delay between uploads
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      
+      // Simple refresh of the candidate list
+      try {
+        const candidatesData = await jobsAPI.getJobCandidatesWithScores(id);
+        
+        if (candidatesData.candidates && candidatesData.candidates.length > 0) {
+          setCandidates(candidatesData.candidates);
+        }
+      } catch (error) {
+        console.error('Failed to refresh candidates:', error);
+      }
+      
+
+      
+    } catch (error: any) {
+      console.error('Resume upload failed:', error);
+      
+      // Log detailed error information
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+        
+        const errorMessage = error.response.data?.message || 'Upload failed';
+        alert(`Upload failed: ${errorMessage}`);
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        alert('Upload failed: No response from server. Please check your connection.');
+      } else {
+        console.error('Error message:', error.message);
+        console.error('Error config:', error.config);
+        alert(`Upload failed: ${error.message}`);
+      }
+    }
+  };
+
+  // Handle file selection and automatic upload
+  const handleFileSelection = (files: FileList | null) => {
+    if (!files) return;
+    
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter(file => {
+      const isValidType = file.type.includes('pdf') || file.type.includes('docx');
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
+      
+      if (!isValidType) {
+        alert(`File "${file.name}" is not a supported format. Please use PDF or DOCX.`);
+        return false;
+      }
+      
+      if (!isValidSize) {
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      
+      return true;
+    });
+    
+    if (validFiles.length > 0) {
+      // Automatically upload all valid files
+      handleMultipleResumeUpload(validFiles);
+    }
   };
 
   if (loading) {
@@ -221,6 +306,8 @@ const JobDetail: React.FC = () => {
           </p>
         </div>
 
+
+
         {/* Candidate Leaderboard */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -250,6 +337,28 @@ const JobDetail: React.FC = () => {
                   />
                 </div>
               </div>
+              
+
+              {/* Import Multiple Resumes Button*/}
+              <input
+                type="file"
+                accept=".pdf,.docx"
+                multiple
+                onChange={(e) => handleFileSelection(e.target.files)}
+                className="hidden"
+                id="resume-upload"
+              />
+              <button 
+                onClick={() => {
+                  document.getElementById('resume-upload')?.click();
+                }}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Import
+              </button>
               
 
 
@@ -289,6 +398,8 @@ const JobDetail: React.FC = () => {
               </button>
             </div>
           </div>
+          
+
 
           {/* Candidates Table */}
           <div className="overflow-x-auto">
@@ -312,6 +423,9 @@ const JobDetail: React.FC = () => {
                    </th>
                                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Assessment
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -338,9 +452,6 @@ const JobDetail: React.FC = () => {
                           <div className="text-xs text-gray-400">
                             {candidate.education}
                           </div>
-                          <div className="text-xs text-gray-400">
-                            {candidate.email}
-                          </div>
                         </div>
                       </div>
                     </td>
@@ -364,6 +475,14 @@ const JobDetail: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {candidate.time}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => handleSendAssessment(candidate.applicationId)}
+                        className="px-3 py-1 rounded-md text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Send Assessment
+                      </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Link 

@@ -3,16 +3,13 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navigation from "./components/Navigation";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
+import ReferralPage from "./pages/referral/referral";
 
-import JobList from "./pages/jobs/list";
-import JobDetail from "./pages/jobs/detail";
 import Dashboard from "./pages/dashboard/dashboard";
 import CreateJob from "./pages/dashboard/create";
 import JobApplicants from "./pages/dashboard/jobDetail";
 import EditJob from "./pages/dashboard/edit";
-import CandidateProfile from "./pages/candidate/profile";
 import CandidateDetailProfile from "./pages/dashboard/candidateProfile";
-import CandidateApps from "./pages/candidate/applications";
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ 
@@ -49,26 +46,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/jobs" element={<JobList />} />
-            <Route path="/jobs/:id" element={<JobDetail />} />
-
-            {/* Protected routes for candidates */}
-            <Route 
-              path="/candidate/profile" 
-              element={
-                <ProtectedRoute allowedRoles={['candidate']}>
-                  <CandidateProfile />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/candidate/applications" 
-              element={
-                <ProtectedRoute allowedRoles={['candidate']}>
-                  <CandidateApps />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="/referral" element={<ReferralPage />} />
 
             {/* Protected routes for employers */}
             <Route 
