@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosResponse } from "axios";
 import { AssessmentScore } from "../types/assessment";
 
 // API Configuration
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://api.colare.co";
 
 // Create axios instance
 const api: AxiosInstance = axios.create({
@@ -140,7 +140,7 @@ export interface Candidate {
 // Auth API
 export const authAPI = {
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post("/auth/login", { email, password });
+    const response = await api.post("/api/auth/login", { email, password });
     return response.data;
   },
 
@@ -162,7 +162,7 @@ export const authAPI = {
       ...(role === "employer" && { companyName }),
     };
 
-    const response = await api.post("/auth/register", payload);
+    const response = await api.post("/api/auth/register", payload);
     return response.data;
   },
 
@@ -196,7 +196,7 @@ export const authAPI = {
     formData.append("role", role);
     formData.append("resumeFile", resumeFile);
 
-    const response = await api.post("/auth/register/upload", formData, {
+    const response = await api.post("/api/auth/register/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
@@ -217,7 +217,7 @@ export const authAPI = {
 
 
   ): Promise<AuthResponse> => {
-    const response = await api.post("/auth/register/confirm", {
+    const response = await api.post("/api/auth/register/confirm", {
       sessionId,
       parsedData,
     });
@@ -245,7 +245,7 @@ export const authAPI = {
       confidence: number;
     };
   }> => {
-    const response = await api.get(`/auth/register/session/${sessionId}`);
+    const response = await api.get(`/api/auth/register/session/${sessionId}`);
     return response.data;
   },
 
@@ -258,14 +258,14 @@ export const jobsAPI = {
     page = 1,
     limit = 10,
   ): Promise<{ jobs: Job[]; pagination: any }> => {
-    const response = await api.get(`/jobs?page=${page}&limit=${limit}`);
+    const response = await api.get(`/api/jobs?page=${page}&limit=${limit}`);
     return response.data.data;
   },
 
 
 
   getById: async (id: string): Promise<Job> => {
-    const response = await api.get(`/jobs/${id}`);
+    const response = await api.get(`/api/jobs/${id}`);
     return response.data.data.job;
   },
 
@@ -277,41 +277,41 @@ export const jobsAPI = {
     requirements?: string;
     assessmentLink?: string;
   }): Promise<{ job: Job }> => {
-    const response = await api.post("/jobs", jobData);
+    const response = await api.post("/api/jobs", jobData);
     return response.data.data;
   },
 
 
 
   update: async (id: string, jobData: Partial<Job>): Promise<{ job: Job }> => {
-    const response = await api.put(`/jobs/${id}`, jobData);
+    const response = await api.put(`/api/jobs/${id}`, jobData);
     return response.data.data;
   },
 
 
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/jobs/${id}`);
+    await api.delete(`/api/jobs/${id}`);
   },
 
 
 
   getByCompany: async (companyId: string): Promise<Job[]> => {
-    const response = await api.get(`/jobs/company/${companyId}`);
+    const response = await api.get(`/api/jobs/company/${companyId}`);
     return response.data.data.jobs;
   },
 
 
 
   getJobCandidates: async (jobId: string): Promise<Candidate[]> => {
-    const response = await api.get(`/jobs/${jobId}/candidates`);
+    const response = await api.get(`/api/jobs/${jobId}/candidates`);
     return response.data.data.candidates;
   },
 
 
 
 sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: string }> => {
-    const response = await api.post(`/applications/${applicationId}/send-assessment`);
+    const response = await api.post(`/api/applications/${applicationId}/send-assessment`);
     return response.data.data;
   },
 
@@ -322,7 +322,7 @@ sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: str
     totalCandidates: number;
     candidatesWithAssessments: number;
   }> => {
-    const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
+    const response = await api.get(`/api/jobs/${jobId}/candidates-with-scores`);
     return response.data.data;
   },
 
@@ -337,7 +337,7 @@ sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: str
     candidatesWithAssessments: number;
   }> => {
     // First get the basic candidate data with assessment scores
-    const response = await api.get(`/jobs/${jobId}/candidates-with-scores`);
+    const response = await api.get(`/api/jobs/${jobId}/candidates-with-scores`);
     const candidatesData = response.data.data;
 
     // For each candidate, fetch their profile data
@@ -346,7 +346,7 @@ sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: str
         try {
           // Fetch candidate profile data using the same API as candidate profile page
           const profileResponse = await api.get(
-            `/candidates/${candidate.id}/profile`,
+            `/api/candidates/${candidate.id}/profile`,
           );
           const profileData = profileResponse.data.data.candidate;
 
@@ -383,7 +383,7 @@ sendAssessmentEmail: async (applicationId: string): Promise<{ assessmentUrl: str
     const formData = new FormData();
     formData.append('resumeFile', resumeFile);
 
-    const response = await api.post(`/jobs/${jobId}/upload-candidate-resume`, formData, {
+    const response = await api.post(`/api/jobs/${jobId}/upload-candidate-resume`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -398,21 +398,21 @@ export const applicationsAPI = {
     jobId: string,
     coverLetter?: string,
   ): Promise<{ application: Application }> => {
-    const response = await api.post("/applications", { jobId, coverLetter });
+    const response = await api.post("/api/applications", { jobId, coverLetter });
     return response.data.data;
   },
 
 
 
   getMyApplications: async (): Promise<Application[]> => {
-    const response = await api.get("/candidates/applications");
+    const response = await api.get("/api/candidates/applications");
     return response.data.data.applications;
   },
 
 
 
   getCompanyApplications: async (): Promise<Application[]> => {
-    const response = await api.get("/companies/applications");
+    const response = await api.get("/api/companies/applications");
     return response.data.data.applications;
   },
 
@@ -423,7 +423,7 @@ export const applicationsAPI = {
     status: string,
   ): Promise<{ application: Application }> => {
     const response = await api.put(
-      `/companies/applications/${applicationId}/status`,
+      `/api/companies/applications/${applicationId}/status`,
       { status },
     );
     return response.data.data;
@@ -432,7 +432,7 @@ export const applicationsAPI = {
 
 
   withdraw: async (applicationId: string): Promise<void> => {
-    await api.delete(`/candidates/applications/${applicationId}`);
+    await api.delete(`/api/candidates/applications/${applicationId}`);
   },
 
 
@@ -441,7 +441,7 @@ export const applicationsAPI = {
 // Profile API
 export const profileAPI = {
   getCandidateProfile: async (): Promise<any> => {
-    const response = await api.get("/candidates/profile");
+    const response = await api.get("/api/candidates/profile");
     return response.data.data.candidate;
   },
 
@@ -452,14 +452,14 @@ export const profileAPI = {
     lastName?: string;
     location?: string;
   }): Promise<any> => {
-    const response = await api.put("/candidates/profile", profileData);
+    const response = await api.put("/api/candidates/profile", profileData);
     return response.data.data.candidate;
   },
 
 
 
   getCompanyProfile: async (): Promise<any> => {
-    const response = await api.get("/companies/profile");
+    const response = await api.get("/api/companies/profile");
     return response.data.data.company;
   },
 
@@ -470,7 +470,7 @@ export const profileAPI = {
     description?: string;
     website?: string;
   }): Promise<any> => {
-    const response = await api.put("/companies/profile", profileData);
+    const response = await api.put("/api/companies/profile", profileData);
     return response.data.data.company;
   },
 
@@ -480,14 +480,14 @@ export const profileAPI = {
 // Dashboard API
 export const dashboardAPI = {
   getCompanyDashboard: async (): Promise<any> => {
-    const response = await api.get("/companies/dashboard");
+    const response = await api.get("/api/companies/dashboard");
     return response.data.data;
   },
 
 
 
   getCompanyAnalytics: async (): Promise<any> => {
-    const response = await api.get("/companies/analytics");
+    const response = await api.get("/api/companies/analytics");
     return response.data.data;
   },
 
@@ -496,7 +496,7 @@ export const dashboardAPI = {
 
 export const candidateAPI = {
   getProfile: async () => {
-    const response = await api.get("/candidates/profile");
+    const response = await api.get("/api/candidates/profile");
     return response.data.data.candidate;
   },
 
