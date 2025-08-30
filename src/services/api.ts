@@ -503,7 +503,7 @@ export const candidateAPI = {
 
 
   getAssessmentScores: async () => {
-    const response = await api.get("/candidates/assessment-scores");
+    const response = await api.get("/api/candidates/assessment-scores");
     // Transform any field-specific scores into the new format if needed
     const scores = response.data.data.assessmentScores.map((score: any) => ({
       ...score,
@@ -546,7 +546,7 @@ export const candidateAPI = {
     hasAssessment: boolean;
   }> => {
     const response = await api.get(
-      `/candidates/${candidateId}/assessment/${jobId}`,
+      `/api/candidates/${candidateId}/assessment/${jobId}`,
     );
     return response.data.data;
   },

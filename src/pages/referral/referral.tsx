@@ -35,7 +35,7 @@ export default function ReferralPage() {
       formData.append('resumeFile', resumeFile!);
 
       // Submit referral to backend
-      const response = await fetch(`${API_BASE_URL}/api/candidates/referral/submit`, {
+      const response = await fetch(`${API_BASE_URL}/candidates/referral/submit`, {
         method: 'POST',
         body: formData,
       });
