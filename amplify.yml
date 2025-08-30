@@ -13,4 +13,11 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/* 
+      - node_modules/**/*
+  # Build triggers for automatic builds
+  build:
+    triggers:
+      - branch:
+          - main
+          - test-frontend
+        pattern: '**/*' 
